@@ -1,0 +1,13 @@
+domain_id,domain_name,domain_name_ar,schema_file,data_files,database_file,color_hex,description
+01,Project & Plot,المشروع والأراضي,01_project_plot.sql,project_data.csv,project_plot.db,00b4d8,Project identity plot geometry and master data
+02,Location & GIS,الموقع والخرائط,02_location_gis.sql,location_data.csv,location_gis.db,06d6a0,Emirates jurisdictions coordinates and GIS data
+03,Stakeholders,أصحاب المصلحة,03_stakeholders.sql,stakeholders_data.csv,stakeholders.db,ffd166,Owner developer contractor consultant registry
+04,Zoning & Regulatory,التخطيط والتنظيم,04_zoning_regulatory.sql,far_limits.csv,zoning_regulatory.db,ef476f,FAR height coverage setback limits per emirate
+05,Validation & Compliance,المطابقة والتوثيق,05_validation.sql,compliance_data.csv,validation.db,118ab2,Permit compliance checks and SLA tracking
+06,Design Parameters,التصميم والمعايير,06_design.sql,cost_indices.csv,design_parameters.db,073b4c,Structural systems facade MEP design parameters
+07,Unit Mix & Program,الوحدات والبرامج,07_unit_mix.sql,unit_types.csv,unit_mix.db,8338ec,Unit types areas and program mix
+08,Cost & Economics,التكاليف والتحليل المالي,08_cost_economics.sql,csi_cost_codes.csv,cost_economics.db,ff006e,CSI cost codes benchmarks lifecycle costs
+09,Schedule & Timeline,الخطة الزمنية,09_schedule.sql,wbs_activities.csv,schedule.db,fb5607,WBS activities durations critical path
+10,Approvals & Authorities,الموافقات والسلطات,10_approvals.sql,permit_sequence.csv,approvals.db,3a86ff,14-step permit sequence with timelines and costs
+11,Geotechnical,الجيوتقنية والأساسيات,11_geotechnical.sql,soil_types.csv,geotechnical.db,80ed99,Soil types bearing capacity shoring foundations
+12,Sustainability & BIM,الاستدامة والجودة,12_sustainability.sql,risk_catalog.csv,sustainability.db,c77dff,LEED Estidama quality risk BIM OMM

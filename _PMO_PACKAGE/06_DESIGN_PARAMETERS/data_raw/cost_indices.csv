@@ -1,0 +1,10 @@
+emirate,typology,structure_aed_sqm,mep_aed_sqm,finishes_aed_sqm,land_price_aed_sqm
+Dubai,High-Rise Tower,2200,1800,1600,2500
+Dubai,Mid-Rise,1800,1500,1300,2000
+Dubai,Low-Rise,1400,1200,1000,1500
+Abu Dhabi,High-Rise Tower,2100,1700,1500,2000
+Abu Dhabi,Mid-Rise,1700,1400,1200,1600
+Abu Dhabi,Low-Rise,1300,1100,900,1200
+Sharjah,High-Rise Tower,1900,1600,1400,1200
+Sharjah,Mid-Rise,1600,1300,1100,900
+Sharjah,Low-Rise,1200,1000,800,700

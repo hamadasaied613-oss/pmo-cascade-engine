@@ -1,0 +1,20 @@
+erDiagram
+    ZONING_REGULATORY {
+        int Z01_id PK
+        string Z01_zone_class
+        real Z04_max_far
+        real Z05_max_height_m
+    }
+    PLANNING_RULES {
+        int rule_id PK
+        string authority
+        string emirate
+        real max_far
+    }
+    FAR_LIMITS {
+        int id PK
+        string emirate
+        real far_min
+        real far_max
+    }
+    PLANNING_RULES ||--o{ ZONING_REGULATORY : "defines"

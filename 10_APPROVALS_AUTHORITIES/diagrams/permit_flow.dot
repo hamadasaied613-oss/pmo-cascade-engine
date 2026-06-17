@@ -1,0 +1,7 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  PERMIT_SEQUENCE [label="{PERMIT_SEQUENCE|int id\lint\lstring\lint\lint\lreal\l}", fillcolor="#D5E8D4"];
+  APPROVALS [label="{APPROVALS|int A01_id\lstring\lstring\l}", fillcolor="#D5E8D4"];
+}

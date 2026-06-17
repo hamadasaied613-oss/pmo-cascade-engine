@@ -26,6 +26,7 @@ a{color:var(--accent);text-decoration:none}
 .status-dot.offline{background:var(--accent4);box-shadow:0 0 8px var(--accent4)}
 .layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 70px)}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 0;overflow-y:auto}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:4px 8px}
 .sidebar .section{padding:8px 20px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-top:12px}
 .sidebar .nav-item{padding:10px 20px;cursor:pointer;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:10px;transition:all .15s}
 .sidebar .nav-item:hover{background:rgba(0,180,216,.05);color:var(--text)}
@@ -68,6 +69,21 @@ a{color:var(--accent);text-decoration:none}
 .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
 .tab{padding:12px 20px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
 .tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:768px){
+  .menu-btn{display:block;position:absolute;left:16px;top:50%;transform:translateY(-50%);z-index:110}
+  .header{padding:16px 20px}
+  .header h1{font-size:16px}
+  .header .sub{font-size:10px}
+  .header .status{font-size:11px}
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:fixed;top:70px;left:-280px;width:260px;height:calc(100vh - 70px);z-index:150;transition:left .3s ease;box-shadow:4px 0 30px rgba(0,0,0,.5)}
+  .sidebar.open{left:0}
+  .sidebar-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:149}
+  .sidebar-overlay.show{display:block}
+  .main{padding:16px;max-height:none}
+  .stats{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+}
 .loading{display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;color:var(--text2)}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -134,9 +150,10 @@ a{color:var(--accent);text-decoration:none}
 <body>
 
 <div class="header">
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
   <div>
     <h1>PMO CASCADE Sovereign Engine</h1>
-    <div class="sub">Full 12-Domain Chain · Visual Catalog Selection</div>
+    <div class="sub">Full 12-Domain Chain - Visual Catalog Selection</div>
   </div>
   <div class="status">
     <span style="font-size:12px;color:var(--text2)" id="serverStatus">Connecting...</span>
@@ -145,6 +162,7 @@ a{color:var(--accent);text-decoration:none}
 </div>
 
 <div class="layout">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
   <div class="sidebar">
     <div class="section">Project</div>
     <div class="nav-item active" onclick="showTab('input',this)">
@@ -482,6 +500,11 @@ const catalogSteps = ['style','exterior','interior','landscape','facilities'];
 // ===============================================
 // NAVIGATION
 // ===============================================
+function toggleMenu(){
+  const s=document.getElementById('sidebarOverlay');
+  const el=document.querySelector('.sidebar');
+  s.classList.toggle('show');el.classList.toggle('open');
+}
 function showTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -489,6 +512,7 @@ function showTab(name, el) {
   if(el) el.classList.add('active');
   if(name==='plan') setTimeout(drawPlan,100);
   if(name==='model3d') setTimeout(build3D,100);
+  if(window.innerWidth<=768){document.querySelector('.sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show')}
 }
 
 function toast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),3000)}

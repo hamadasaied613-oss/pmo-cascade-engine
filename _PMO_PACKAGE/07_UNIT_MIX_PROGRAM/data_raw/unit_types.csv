@@ -1,0 +1,11 @@
+unit_code,unit_name,min_area_sqm,max_area_sqm,typical_area_sqm,bedroom_count,category
+STD,Studio,38,55,45,0,Residential
+1BR,One Bedroom,60,85,72,1,Residential
+2BR,Two Bedroom,95,130,112,2,Residential
+3BR,Three Bedroom,140,185,160,3,Residential
+4BR,Four Bedroom,200,280,240,4,Residential
+PH,Penthouse,300,600,450,5,Residential
+RET,Retail,50,500,150,-1,Commercial
+OFF,Office,80,300,150,-1,Commercial
+HRM,Hotel Room,35,65,48,-1,Hospitality
+SUI,Hotel Suite,70,200,120,-1,Hospitality

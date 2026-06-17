@@ -1,0 +1,10 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  SUSTAINABILITY [label="{SUSTAINABILITY|int id\lstring\lreal\l}", fillcolor="#D5E8D4"];
+  QUALITY_MASTER [label="{QUALITY_MASTER|int id\lstring\lreal\l}", fillcolor="#D5E8D4"];
+  RISK_REGISTER [label="{RISK_REGISTER|int id\lstring\lreal\l}", fillcolor="#D5E8D4"];
+  BIM_MASTER [label="{BIM_MASTER|int id\lstring\lstring\l}", fillcolor="#D5E8D4"];
+  OMM_MASTER [label="{OMM_MASTER|int id\lstring\lreal\l}", fillcolor="#D5E8D4"];
+}

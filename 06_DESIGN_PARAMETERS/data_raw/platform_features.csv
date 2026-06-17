@@ -1,0 +1,13 @@
+Module,Category,Feature,Level,Output
+Core,UX,EN/AR Bilingual,All,UI
+Core,Legal,Global Disclaimer + UAE Law Shield,All,Footer/Watermark/Logs
+Luxury,Design,Palettes/Lighting/Materials/Pools/Decor,Pro,PDF
+Contracts,Engine,Strategy Memo (UAE Codes + FIDIC mapping),Pro,PDF
+Contracts,Engine,Full Styled Contract Draft (original wording),Pro,HTML/DOCX
+QS,Takeoff,DXF/Model/Manual Digitizer,Pro,HTML/CSV/XLSX
+QS,Costing,Admin Rates & Assemblies,Pro,CSV/XLSX
+QS,Visualization,Charts + Annotated Evidence,Pro,PNG/HTML
+Integrations,Models,OBJ/DXF/IFC (opt),Enterprise,Files
+Planning,Schedules,MSP/P6 Exports,Enterprise,XML/CSV
+Maps,GIS,Markers/GeoJSON Overlays,Pro,HTML
+Security,IP,License Gate + Watermarks + Logs,All,Config/Docs

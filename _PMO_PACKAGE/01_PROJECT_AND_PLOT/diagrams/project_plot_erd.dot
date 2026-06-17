@@ -1,0 +1,8 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  PROJECT_IDENTITY [label="{PROJECT_IDENTITY|int P01_id\lstring\lstring\l}", fillcolor="#D5E8D4"];
+  PLOT_DATA [label="{PLOT_DATA|int plot_id\lint project_id\lstring\lreal\l}", fillcolor="#D5E8D4"];
+  PROJECT_MASTER [label="{PROJECT_MASTER|int id\lstring project_id\lstring\lreal\lint\l}", fillcolor="#D5E8D4"];
+}

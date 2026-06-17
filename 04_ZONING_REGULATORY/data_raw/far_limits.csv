@@ -1,0 +1,8 @@
+emirate,land_use,typology,far_min,far_optimal,far_max,coverage_min_pct,coverage_optimal_pct,coverage_max_pct,height_min_m,height_optimal_m,height_max_m,notes
+Dubai,Residential,High-Rise Tower,4.0,5.0,6.0,35,40,45,60,80,100,DM Mainland standard
+Dubai,Mixed-use,High-Rise Tower,4.0,5.5,7.0,40,45,50,60,90,120,DM Mixed-use zones
+Dubai,Commercial,Mid-Rise,2.5,3.0,4.0,60,70,80,30,45,60,DDA Creative zones
+Abu Dhabi,Residential,High-Rise Tower,3.0,4.0,5.0,30,35,40,50,70,90,DMT Mainland
+Abu Dhabi,Commercial,Mid-Rise,2.0,2.5,3.5,55,65,75,25,40,55,DMT Commercial
+Sharjah,Residential,High-Rise Tower,3.0,3.5,4.5,30,35,40,45,60,80,SM Standard
+Sharjah,Residential,Mid-Rise,2.0,2.5,3.0,50,60,70,25,35,50,SM Standard

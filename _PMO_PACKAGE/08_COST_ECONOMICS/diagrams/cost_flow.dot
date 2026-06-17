@@ -1,0 +1,8 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  COST_ANALYSIS [label="{COST_ANALYSIS|int C01_id\lreal\lreal\lreal\l}", fillcolor="#D5E8D4"];
+  CSI_COST_CODES [label="{CSI_COST_CODES|int id\lint\lstring\lreal\l}", fillcolor="#D5E8D4"];
+  COST_BENCHMARKS [label="{COST_BENCHMARKS|int id\lstring\lreal\l}", fillcolor="#D5E8D4"];
+}

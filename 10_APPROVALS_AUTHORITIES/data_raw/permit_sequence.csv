@@ -1,0 +1,15 @@
+step_number,permit_name,min_days,max_days,avg_days,min_cost_aed,max_cost_aed,avg_cost_aed,authority
+1,Land Title Deed,7,14,10,0,0,0,DLD
+2,Land NOC from DLD,5,10,7,500,1000,750,DLD
+3,Initial Planning Approval,14,28,21,2000,5000,3500,DM/DDA
+4,Environmental NOC,30,60,45,10000,50000,30000,DM/EPDA
+5,Geotechnical Report,14,28,21,15000,100000,57500,DM
+6,RTA NOC,30,60,45,5000,50000,27500,RTA
+7,Civil Defense NOC,14,28,21,2000,10000,6000,DCD
+8,DEWA Connection,30,90,60,10000,500000,255000,DEWA
+9,Building Permit,30,60,45,0,0,0,DM/DDA/Trakhees
+10,District Cooling NOC,30,60,45,50000,500000,275000,Empower/Tabreed
+11,Telecom NOC,14,28,21,5000,50000,27500,du/Etisalat
+12,SIRA Security Approval,14,28,21,3000,20000,11500,SIRA
+13,Completion Certificate,14,28,21,1000,5000,3000,DM
+14,Occupancy Certificate,7,14,10,500,2000,1250,DM

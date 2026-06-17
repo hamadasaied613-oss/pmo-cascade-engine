@@ -1,0 +1,21 @@
+erDiagram
+    PROJECT_IDENTITY {
+        int P01_id PK
+        string P02_project_name
+        string P05_proj_status
+    }
+    PLOT_DATA {
+        int plot_id PK
+        int project_id FK
+        string P03_plot_no
+        real P05_plot_area_m2
+    }
+    PROJECT_MASTER {
+        int id PK
+        string project_id UK
+        string emirate
+        real total_cost
+        int duration_days
+    }
+    PROJECT_IDENTITY ||--o{ PLOT_DATA : "has plots"
+    PROJECT_IDENTITY ||--o{ PROJECT_MASTER : "tracked by"

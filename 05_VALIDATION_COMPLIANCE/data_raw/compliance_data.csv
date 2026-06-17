@@ -1,0 +1,9 @@
+authority,permit_approval,ref_code,fee_aed,sla_days,status
+Dubai Municipality,Building Permit,DM-BP-001,0,45,Active
+Dubai Municipality,Environmental NOC,DM-ENV-001,15000,30,Active
+DCD,Civil Defense NOC,DCD-NOC-001,5000,14,Active
+DEWA,Power Connection,DEWA-PC-001,285350,60,Pending
+DLD,Title Deed,DLD-TD-001,4000000,10,Active
+DLD,Transfer Fee,DLD-TF-001,4000000,7,Active
+Empower,District Cooling,EMP-DC-001,500000,45,Pending
+SIRA,Security Approval,SIRA-SA-001,8000,14,Pending

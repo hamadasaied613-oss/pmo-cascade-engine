@@ -1,0 +1,7 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  VALIDATION_RESULTS [label="{VALIDATION_RESULTS|int V01_id\lreal\lint\l}", fillcolor="#D5E8D4"];
+  COMPLIANCE_CHECKS [label="{COMPLIANCE_CHECKS|int id\lstring\lstring\lreal\lint\l}", fillcolor="#D5E8D4"];
+}

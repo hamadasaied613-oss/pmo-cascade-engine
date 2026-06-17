@@ -1,0 +1,23 @@
+erDiagram
+    GEOTECHNICAL_DATA {
+        int id PK
+        string soil_type
+        real bc_min_kpa
+        real bc_max_kpa
+        real shoring_aed_m2
+    }
+    SITE_GEOTECHNICAL {
+        int id PK
+        string emirate
+        string area
+        real bearing_capacity_kpa
+        real settlement_mm
+    }
+    ENGINEERING_SOILS {
+        int id PK
+        string soil_type
+        string uscs_group
+        real friction_angle_deg
+    }
+    GEOTECHNICAL_DATA ||--o{ SITE_GEOTECHNICAL : "applied to"
+    GEOTECHNICAL_DATA ||--o{ ENGINEERING_SOILS : "properties of"

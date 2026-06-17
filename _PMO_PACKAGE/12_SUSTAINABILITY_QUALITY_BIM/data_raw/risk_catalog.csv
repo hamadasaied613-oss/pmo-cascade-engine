@@ -1,0 +1,11 @@
+risk_id,risk_name,category,description,probability_pct,impact_level,risk_score,standard_mitigation
+R101,False Float in Schedule,Schedule/Claims,Artificially inflated schedule buffer masks delays,60,80,48,Maintain transparent schedules; conduct independent reviews
+R102,Weather Delays (Summer Heat),Environmental,Productivity loss due to extreme summer temperatures,80,60,48,Schedule outdoor work Oct-Apr; provide cooling stations
+R103,Material Import Delays,Supply Chain,Delays at port or customs for imported materials,60,70,42,Maintain buffer stock; pre-approve suppliers; source locally
+R104,Municipality Approval Delays,Regulatory,Longer than expected time for NOCs and permits,50,60,30,Ensure complete submissions; engage dedicated permits manager
+R105,Unexpected Geotechnical Conditions,Technical,Soil conditions differ from initial report,40,90,36,Comprehensive soil investigation; contingency in foundation budget
+R106,Material Price Escalation,Financial,Steel/concrete price increases during construction,55,65,36,Lock prices in contracts; include escalation clause
+R107,Labor Shortage,Resource,Difficulty in securing skilled labor,45,70,32,Pre-qualify multiple subcontractors; early mobilization
+R108,Design Changes Late in Project,Design,Client-initiated changes after construction starts,35,85,30,Firm scope freeze; change order procedures
+R109,Currency Fluctuation,Financial,Exchange rate changes affecting imported materials,40,55,22,Hedge currency risk; local sourcing strategy
+R110,COVID/Pandemic Disruption,Force Majeure,Work restrictions due to health emergencies,20,90,18,Business continuity plan; remote work protocols

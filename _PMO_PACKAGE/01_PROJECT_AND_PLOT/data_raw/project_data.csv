@@ -1,0 +1,6 @@
+project_name,project_code,emirate,district,zone,plot_area_m2,coverage_pct,far,height_limit_m,gfa_m2,floors,building_height_m,structural_system,soil_type,total_cost_aed,cost_per_sqm_aed,duration_days,quality_score,status,risk_level
+Ritz Carlton Tower,RC-001,Dubai,Marina,COMM-01,2850,0.45,5.8,120,16530,19,76.0,RC Frame,Dense Sand,245000000,14822,730,87.5,Active,Low
+Business Bay Tower,BB-002,Dubai,Business Bay,COMM-02,1920,0.40,5.0,100,9600,15,60.0,RC Frame,Medium Dense Sand,145000000,15104,540,82.0,Active,Medium
+JBR Beach Residence,JBR-003,Dubai,JBR,RES-03,3200,0.50,4.5,80,14400,12,48.0,RC Shear Wall,Loose Sand,98000000,6806,480,79.5,Planning,Low
+Abu Dhabi Corniche,AC-004,Abu Dhabi,Corniche,MIXED-01,4500,0.55,6.5,120,29250,22,88.0,Steel + RC,Stiff Clay,380000000,12991,810,91.0,Active,Low
+Sharjah Waterfront,SW-005,Sharjah,Waterfront,RES-01,2800,0.45,4.0,60,11200,10,40.0,RC Frame,Medium Sand,65000000,5804,420,75.0,Design,Medium

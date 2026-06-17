@@ -1,0 +1,14 @@
+erDiagram
+    VALIDATION_RESULTS {
+        int V01_id PK
+        real V09_compliance_score
+        int V07_overall_pass
+    }
+    COMPLIANCE_CHECKS {
+        int id PK
+        string authority
+        string permit_approval
+        real fee_aed
+        int sla_days
+    }
+    VALIDATION_RESULTS ||--o{ COMPLIANCE_CHECKS : "validated by"

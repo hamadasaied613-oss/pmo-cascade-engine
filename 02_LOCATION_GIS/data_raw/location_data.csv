@@ -1,0 +1,11 @@
+emirate,jurisdiction,authority_main,area_km2,population_k,zone_type,main_planning,building_permit,civil_defense,power_water
+Dubai,Dubai Municipality (DM),DM,4114,3600,Mainland,DM,DM,DCD,DEWA
+Dubai,DDA (DIEZ),DDA,4114,3600,Creative/ Tech,DDA,DDA,DCD,DEWA
+Dubai,Trakhees (PCFC),Trakhees,4114,3600,Ports/ Freezone,Trakhees,Trakhees,DCD,DEWA
+Abu Dhabi,DMT (Mainland),DMT,67340,1800,Mainland,DMT,DMT,ADCDA,ADPower/AADC
+Abu Dhabi,ADGM,ADGM,67340,1800,Free Zone,ADGM,ADGM,ADCDA,ADPower
+Sharjah,Sharjah Municipality,SM,2590,1800,Mainland,SM,SM,SCD,SEWA
+Ajman,Ajman Municipality,AM,720,500,Mainland,AM,AM,ACD,AEA
+Umm Al Quwain,UAQ Municipality,UAQM,720,50,Mainland,UAQM,UAQM,UCD,UEA
+Ras Al Khaimah,RAK Municipality,RAKM,1684,200,Mainland,RAKM,RAKM,RCD,RAKEA
+Fujairah,Fujairah Municipality,FM,1450,160,Mainland,FM,FM,FCD,FEA

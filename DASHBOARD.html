@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMO DOMAINS — لوحة المعلومات</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1a1a2e; color: #eee; }
+        .header { background: linear-gradient(135deg, #2C3E50, #3498DB); padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; color: #fff; margin-bottom: 10px; }
+        .header p { color: #BDC3C7; font-size: 14px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; padding: 30px; }
+        .card { background: #16213e; border-radius: 12px; padding: 20px; border-left: 5px solid; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { font-size: 16px; margin-bottom: 10px; }
+        .card .ar { color: #BDC3C7; font-size: 13px; margin-bottom: 15px; }
+        .card .stats { display: flex; gap: 15px; margin-bottom: 15px; }
+        .stat { text-align: center; }
+        .stat .num { font-size: 24px; font-weight: bold; }
+        .stat .label { font-size: 11px; color: #7F8C8D; }
+        .card .files { font-size: 12px; color: #95A5A6; }
+        .card .files span { color: #3498DB; }
+        .summary { background: #0f3460; padding: 20px; margin: 0 30px 30px; border-radius: 12px; display: flex; justify-content: space-around; text-align: center; }
+        .summary .item .num { font-size: 32px; font-weight: bold; color: #3498DB; }
+        .summary .item .label { font-size: 12px; color: #BDC3C7; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PMO DOMAINS — نظام إدارة المشاريع</h1>
+        <p>12 مجالاً | 69 ملفاً | بيانات هندسية مُضيّقة | Emirates: Dubai, Abu Dhabi, Sharjah, RAK, Ajman, UAQ, Fujairah</p>
+    </div>
+    
+    <div class="summary">
+        <div class="item"><div class="num">12</div><div class="label">مجال</div></div>
+        <div class="item"><div class="num">12</div><div class="label">Schema SQL</div></div>
+        <div class="item"><div class="num">17</div><div class="label">CSV Data</div></div>
+        <div class="item"><div class="num">13</div><div class="label">Database DB</div></div>
+        <div class="item"><div class="num">12</div><div class="label">Diagram</div></div>
+        <div class="item"><div class="num">13</div><div class="label">Workbook XLSX</div></div>
+    </div>
+
+    <div class="grid">
+
+        <div class="card" style="border-color: #00B4D8">
+            <h3 style="color: #00B4D8">01 — Project & Plot</h3>
+            <div class="ar">المشروع والأراضي</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #00B4D8">5</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>project_data.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #06D6A0">
+            <h3 style="color: #06D6A0">02 — Location & GIS</h3>
+            <div class="ar">الموقع والخرائط</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #06D6A0">10</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>location_data.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #FFD166">
+            <h3 style="color: #FFD166">03 — Stakeholders</h3>
+            <div class="ar">أصحاب المصلحة</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #FFD166">5</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>stakeholders_data.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #EF476F">
+            <h3 style="color: #EF476F">04 — Zoning & Regulatory</h3>
+            <div class="ar">التخطيط والتنظيم</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #EF476F">7</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>far_limits.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #118AB2">
+            <h3 style="color: #118AB2">05 — Validation & Compliance</h3>
+            <div class="ar">المطابقة والتوثيق</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #118AB2">8</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">2</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>compliance_data.csv + enum_lookups.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #073B4C">
+            <h3 style="color: #073B4C">06 — Design Parameters</h3>
+            <div class="ar">التصميم والمعايير</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #073B4C">9</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">2</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>cost_indices.csv + platform_features.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #8338EC">
+            <h3 style="color: #8338EC">07 — Unit Mix & Program</h3>
+            <div class="ar">الوحدات والبرامج</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #8338EC">10</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>unit_types.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #FF006E">
+            <h3 style="color: #FF006E">08 — Cost & Economics</h3>
+            <div class="ar">التكاليف والتحليل المالي</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #FF006E">15</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">3</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>csi_cost_codes.csv + cost_benchmarks.csv + deliverables_pricing.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #FB5607">
+            <h3 style="color: #FB5607">09 — Schedule & Timeline</h3>
+            <div class="ar">الخطة الزمنية</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #FB5607">23</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>wbs_activities.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #3A86FF">
+            <h3 style="color: #3A86FF">10 — Approvals & Authorities</h3>
+            <div class="ar">الموافقات والسلطات</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #3A86FF">14</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">2</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>permit_sequence.csv + authority_matrix_raw.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #80ED99">
+            <h3 style="color: #80ED99">11 — Geotechnical</h3>
+            <div class="ar">الجيوقيقة والأساسيات</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #80ED99">26</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">3</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>soil_types.csv + site_geotechnical.csv + soil_reference_raw.csv</span></div>
+        </div>
+
+        <div class="card" style="border-color: #C77DFF">
+            <h3 style="color: #C77DFF">12 — Sustainability & BIM</h3>
+            <div class="ar">الاستدامة والجودة</div>
+            <div class="stats">
+                <div class="stat"><div class="num" style="color: #C77DFF">10</div><div class="label">صف</div></div>
+                <div class="stat"><div class="num">2</div><div class="label">CSV</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">DB</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">Diagram</div></div>
+            </div>
+            <div class="files">Files: <span>risk_catalog.csv + risks_catalog_raw.csv</span></div>
+        </div>
+
+    </div>
+    
+    <div style="background: #0f3460; padding: 20px; margin: 0 30px 30px; border-radius: 12px;">
+        <h3 style="color: #3498DB; margin-bottom: 15px;">النطاقات المُضيّقة</h3>
+        <table style="width: 100%; border-collapse: collapse; color: #BDC3C7;">
+            <tr style="border-bottom: 1px solid #2C3E50;">
+                <th style="padding: 8px; text-align: right;">النطاق الأصلي</th>
+                <th style="padding: 8px; text-align: right;">القيمة المضيّقة</th>
+                <th style="padding: 8px; text-align: right;">المصدر</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #1a1a2e;">
+                <td style="padding: 8px;">1-2 basements</td>
+                <td style="padding: 8px; color: #27AE60;">min:1, max:2, typical:2</td>
+                <td style="padding: 8px;">T_GEOTECH</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1a1a2e;">
+                <td style="padding: 8px;">7-14 days (Land Title)</td>
+                <td style="padding: 8px; color: #27AE60;">min:7, max:14, avg:10</td>
+                <td style="padding: 8px;">MV1_Permit</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1a1a2e;">
+                <td style="padding: 8px;">30-60 days (Building Permit)</td>
+                <td style="padding: 8px; color: #27AE60;">min:30, max:60, avg:45</td>
+                <td style="padding: 8px;">MV1_Permit</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1a1a2e;">
+                <td style="padding: 8px;">200-400 kPa (Dense Sand)</td>
+                <td style="padding: 8px; color: #27AE60;">min:200, max:400, typical:300</td>
+                <td style="padding: 8px;">MV1_Soil</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #1a1a2e;">
+                <td style="padding: 8px;">15-20% yield</td>
+                <td style="padding: 8px; color: #27AE60;">min:15, max:20, typical:17.5</td>
+                <td style="padding: 8px;">RM Model</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="text-align: center; padding: 20px; color: #7F8C8D; font-size: 12px;">
+        Generated: 2026-06-16 | Style: Ras Flat Dark | Font: Calibri Bold
+    </div>
+</body>
+</html>

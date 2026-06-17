@@ -1,0 +1,9 @@
+emirate,area,lat,lon,soil_type,bearing_capacity_kpa,settlement_mm,groundwater_depth_m,sulfate_ppm,chloride_ppm,pile_capacity_kn,foundation_recommendation
+Dubai,Downtown,25.1972,55.2744,Dense Sand,350,15,2.5,1200,800,1500,Raft Foundation
+Dubai,Marina,25.0781,55.1398,Medium Dense Sand,280,25,1.8,2100,1500,1200,Piled Foundation
+Dubai,JVC,25.0456,55.2234,Medium Sand,220,30,3.0,1800,1200,1000,Piled Foundation
+Dubai,Dubai Hills,25.1105,55.2567,Stiff Clay,180,20,4.0,900,600,1100,Raft/Piled
+Abu Dhabi,Al Reem,24.5014,54.4088,Sabkha,120,50,0.5,3500,2800,800,Deep Piled Foundation
+Abu Dhabi,Yas Island,24.4567,54.6012,Medium Clay,150,35,1.5,2200,1800,900,Piled Foundation
+Sharjah,Al Mamzar,25.3123,55.3456,Loose Sand,100,40,2.0,1500,1000,700,Deep Piled
+Rak,Al Marjan,25.6789,55.9012,Coastal Sabkha,80,55,0.8,4000,3200,600,Deep Piled + Ground Improvement

@@ -1,0 +1,24 @@
+phase_id,phase_name,activity_id,activity_name,duration_days,is_critical,predecessor,resource_type
+1,Enabling Works,101,Site Clearance & Mobilization,14,0,,Labour
+1,Enabling Works,102,Shoring Installation,28,0,101,Equipment
+1,Enabling Works,103,Excavation,21,0,102,Equipment
+1,Enabling Works,104,Pile Foundations,45,1,103,Piling
+2,Substructure,201,Raft Foundation,30,1,104,Concrete
+2,Substructure,202,Basement Walls,21,0,201,Concrete
+2,Substructure,203,Basement Slab,14,0,202,Concrete
+3,Superstructure,301,Ground Floor Slab,10,0,203,Concrete
+3,Superstructure,302,Typical Floor Cycle,7,1,301,Concrete
+3,Superstructure,303,Structure Complete,0,1,302,Concrete
+4,MEP Rough-in,401,MEP First Fix,60,0,301,MEP
+4,MEP Rough-in,402,MEP Second Fix,45,0,401,MEP
+5,Finishes,501,Internal Plastering,30,0,401,Finishes
+5,Finishes,502,Tiling & Flooring,40,0,501,Finishes
+5,Finishes,503,Painting & Decoration,25,0,502,Finishes
+6,External Works,601,Facade Installation,90,0,303,Specialist
+6,External Works,602,Landscaping,30,0,601,Labour
+7,Commissioning,701,MEP Testing & Commissioning,30,0,402,MEP
+7,Commissioning,702,Fire Life Safety,21,0,701,Specialist
+7,Commissioning,703,Final Inspection,14,0,702,Inspection
+8,Handover,801,Snagging & Rectification,21,0,703,All
+8,Handover,802,Completion Certificate,14,0,801,Authority
+8,Handover,803,Occupancy Certificate,7,0,802,Authority

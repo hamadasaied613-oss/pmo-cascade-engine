@@ -1,0 +1,26 @@
+erDiagram
+    SUSTAINABILITY {
+        int id PK
+        string leed_certification_goal
+        real carbon_footprint_target
+    }
+    QUALITY_MASTER {
+        int id PK
+        string quality_id
+        real first_pass_yield
+    }
+    RISK_REGISTER {
+        int id PK
+        string risk_id
+        real risk_score
+    }
+    BIM_MASTER {
+        int id PK
+        string bim_id
+        string lod_requirement
+    }
+    OMM_MASTER {
+        int id PK
+        string omm_id
+        real operational_budget_aed_year
+    }

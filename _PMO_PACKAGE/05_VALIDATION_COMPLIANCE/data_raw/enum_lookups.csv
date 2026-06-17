@@ -1,0 +1,15 @@
+GROUP,CODE,LABEL_EN,LABEL_AR,SORT_ORDER
+Emirate,DXB,Dubai,دبي,1
+Emirate,AUH,Abu Dhabi,أبوظبي,2
+Emirate,SHJ,Sharjah,الشارقة,3
+UseCategory,RESI,Residential,سكني,1
+UseCategory,COMM,Commercial,تجاري,2
+UseCategory,MIX,Mixed-Use,متعدد الاستخدام,3
+UseCategory,HOT,Hotel,فندقي,4
+QualityLevel,ECO,Economic,اقتصادي,1
+QualityLevel,STD,Standard,قياسي,2
+QualityLevel,HI,High-End,راقي,3
+QualityLevel,LUX,Luxury,فاخر,4
+HeightClass,LOW,Low-Rise (<10F),منخفض,1
+HeightClass,MID,Mid-Rise (10-30F),متوسط,2
+HeightClass,HIGH,High-Rise (>30F),مرتفع,3

@@ -1,0 +1,18 @@
+erDiagram
+    COST_ANALYSIS {
+        int C01_id PK
+        real C01_construction_cost_aed
+        real C10_roi_pct
+        real C11_npv_aed
+    }
+    CSI_COST_CODES {
+        int id PK
+        int csi_code
+        string category
+        real luxury_aed_sqm
+    }
+    COST_BENCHMARKS {
+        int id PK
+        string item_key
+        real value
+    }

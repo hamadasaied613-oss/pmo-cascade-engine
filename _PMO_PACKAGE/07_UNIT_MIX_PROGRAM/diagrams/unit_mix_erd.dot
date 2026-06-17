@@ -1,0 +1,7 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  UNIT_MIX [label="{UNIT_MIX|int U01_id\lint\lint\l}", fillcolor="#D5E8D4"];
+  UNIT_TYPES [label="{UNIT_TYPES|int id\lstring unit_code\lreal\l}", fillcolor="#D5E8D4"];
+}

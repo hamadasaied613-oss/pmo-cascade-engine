@@ -1,0 +1,11 @@
+phase,service,cost_aed,notes
+Initiation & Planning,Developer NOC,3000,DLD requirement
+Design & Contracting,DDA Permit Fee,100000,DDA standard
+Construction,DEWA Connection Cost,285350,DEWA schedule
+Services Connection,Empower Deposit,500000,Empower standard
+Services Connection,Telecom Setup Fee,40000,du/Etisalat
+Annual Services,Service Charges,7200000,Annual estimate
+DLD Fees,Transfer Fee,4000000,DLD 4% standard
+DLD Fees,Mortgage Fee,175000,0.25% of loan
+DLD Fees,Admin Fee,400000,DLD standard
+DLD Fees,VAT on Transfer Fee,200000,5% of transfer

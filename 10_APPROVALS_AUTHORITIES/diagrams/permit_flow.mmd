@@ -1,0 +1,15 @@
+erDiagram
+    PERMIT_SEQUENCE {
+        int id PK
+        int step_number
+        string permit_name
+        int min_days
+        int max_days
+        real avg_cost_aed
+    }
+    APPROVALS {
+        int A01_id PK
+        string A02_noc_status
+        string A04_building_permit_no
+    }
+    PERMIT_SEQUENCE ||--o{ APPROVALS : "tracked by"

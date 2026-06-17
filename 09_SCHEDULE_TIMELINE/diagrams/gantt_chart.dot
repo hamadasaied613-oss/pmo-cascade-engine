@@ -1,0 +1,7 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  SCHEDULE_DATA [label="{SCHEDULE_DATA|int T01_id\lstring\lstring\l}", fillcolor="#D5E8D4"];
+  WBS_ACTIVITIES [label="{WBS_ACTIVITIES|int id\lint\lstring\lint\lint\l}", fillcolor="#D5E8D4"];
+}

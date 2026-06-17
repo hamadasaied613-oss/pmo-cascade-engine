@@ -1,0 +1,6 @@
+RISK_ID,RISK_NAME,CATEGORY,DESCRIPTION,DEFAULT_PROBABILITY,DEFAULT_IMPACT,STANDARD_MITIGATION
+R101,False Float in Schedule,Schedule/Claims,"Artificially inflated schedule buffer masks delays, hurting genuine EOT claims.",0.6,0.8,Maintain transparent schedules; conduct independent schedule reviews.
+R102,Weather Delays (Summer Heat),Environmental,Productivity loss and work stoppages due to extreme summer temperatures.,0.8,0.6,Schedule critical outdoor work during cooler months; provide adequate cooling.
+R103,Material Import Delays,Supply Chain,Delays at port or customs for internationally sourced materials.,0.6,0.7,Maintain buffer stock; pre-approve suppliers; source locally where possible.
+R104,Municipality Approval Delays,Regulatory,Longer than expected time to receive NOCs and building permits.,0.5,0.6,Ensure complete and accurate submissions; engage a dedicated permits manager.
+R105,Unexpected Geotechnical Conditions,Technical,"Soil conditions differ from the initial report, requiring design changes.",0.4,0.9,Perform comprehensive soil investigation; include contingency in foundation budget.

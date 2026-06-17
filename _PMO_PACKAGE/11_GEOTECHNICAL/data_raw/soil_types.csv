@@ -1,0 +1,10 @@
+soil_type,bc_min_kpa,bc_max_kpa,bc_typical_kpa,found_type,shoring,shoring_aed_m2,dewatering,dewatering_aed_m2,cost_factor,gw_depth_m,notes
+Dense Sand,200,400,300,Shallow/Piles,Sheet Piling,350,Medium,45,1.0,5.0,Common in coastal areas
+Medium Sand,150,250,200,Shallow/Piles,Sheet Piling,380,Medium,55,1.1,4.0,Widely distributed
+Loose Sand,75,150,112,Piles,Secant Piles,520,High,75,1.3,3.0,Requires pile foundation
+Stiff Clay,100,200,150,Shallow/Piles,Diaphragm Wall,650,Low,35,1.2,6.0,Good bearing capacity
+Medium Clay,75,150,112,Piles,Secant Piles,580,Medium,65,1.4,5.0,Settlement concerns
+Soft Clay,50,100,75,Piles,Diaphragm Wall,890,High,85,1.6,2.0,Poor foundation conditions
+Coastal Sabkha,50,100,75,Deep Piles,Diaphragm Wall,1200,Critical,95,1.8,0.5,Very challenging - high sulfate
+Fill Material,50,100,75,Piles,Secant Piles,500,High,70,1.5,3.0,Variable quality
+Rock,500,5000,2750,Shallow,None,250,Low,15,0.9,10.0,Excellent - minimal shoring

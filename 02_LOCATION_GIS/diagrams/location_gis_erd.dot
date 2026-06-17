@@ -1,0 +1,8 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  EMIRATES_REGISTRY [label="{EMIRATES_REGISTRY|int id\lstring emirate_name\lstring\l}", fillcolor="#D5E8D4"];
+  LOCATION_DATA [label="{LOCATION_DATA|int L01_id\lstring\lreal\lreal\l}", fillcolor="#D5E8D4"];
+  UAE_UNIFIED_DATA [label="{UAE_UNIFIED_DATA|int id\lstring\lstring\lstring\l}", fillcolor="#D5E8D4"];
+}

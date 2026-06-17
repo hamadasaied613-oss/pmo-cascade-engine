@@ -1,0 +1,12 @@
+erDiagram
+    UNIT_MIX {
+        int U01_id PK
+        int U01_total_units
+        int U12_parking_spaces
+    }
+    UNIT_TYPES {
+        int id PK
+        string unit_code UK
+        real typical_area_sqm
+    }
+    UNIT_TYPES ||--o{ UNIT_MIX : "classifies"

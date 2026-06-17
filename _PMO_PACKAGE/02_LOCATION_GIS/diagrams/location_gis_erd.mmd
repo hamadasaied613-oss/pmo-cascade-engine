@@ -1,0 +1,20 @@
+erDiagram
+    EMIRATES_REGISTRY {
+        int id PK
+        string emirate_name UK
+        string authority_main
+    }
+    LOCATION_DATA {
+        int L01_id PK
+        string L01_loc_emirate
+        real L11_coord_x
+        real L12_coord_y
+    }
+    UAE_UNIFIED_DATA {
+        int id PK
+        string emirate
+        string jurisdiction
+        string building_permit
+    }
+    EMIRATES_REGISTRY ||--o{ LOCATION_DATA : "contains"
+    EMIRATES_REGISTRY ||--o{ UAE_UNIFIED_DATA : "mapped to"

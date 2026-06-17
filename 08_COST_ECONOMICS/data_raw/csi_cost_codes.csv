@@ -1,0 +1,16 @@
+csi_code,category,basic_aed_sqm,standard_aed_sqm,premium_aed_sqm,luxury_aed_sqm
+1,General Requirements,50,75,100,150
+2,Existing Conditions,30,45,60,90
+3,Concrete,350,450,600,800
+4,Masonry,200,250,350,500
+5,Metals,400,500,700,1000
+6,Wood/Plastics,150,200,300,450
+7,Thermal/Moisture,100,150,200,300
+8,Openings,250,350,500,750
+9,Finishes,300,400,600,900
+21,Fire Suppression,80,120,160,240
+22,Plumbing,200,300,400,600
+23,HVAC,350,450,600,800
+26,Electrical,300,400,550,750
+27,Communications,150,200,300,450
+28,Electronic Safety,100,150,200,300

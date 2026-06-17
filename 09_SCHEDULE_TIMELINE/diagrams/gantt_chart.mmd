@@ -1,0 +1,14 @@
+erDiagram
+    SCHEDULE_DATA {
+        int T01_id PK
+        string T04_construction_start
+        string T05_construction_end
+    }
+    WBS_ACTIVITIES {
+        int id PK
+        int activity_id
+        string activity_name
+        int duration_days
+        int is_critical
+    }
+    SCHEDULE_DATA ||--o{ WBS_ACTIVITIES : "contains"

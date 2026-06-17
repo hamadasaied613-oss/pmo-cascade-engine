@@ -1,0 +1,8 @@
+digraph ER {
+  rankdir=TB;
+  node [shape=record, fontname="Calibri", fontsize=10, style=filled, fillcolor="#ECF0F1"];
+  edge [fontname="Calibri", fontsize=8, color="#7F8C8D"];
+  ZONING_REGULATORY [label="{ZONING_REGULATORY|int Z01_id\lstring\lreal\lreal\l}", fillcolor="#D5E8D4"];
+  PLANNING_RULES [label="{PLANNING_RULES|int rule_id\lstring\lstring\lreal\l}", fillcolor="#D5E8D4"];
+  FAR_LIMITS [label="{FAR_LIMITS|int id\lstring\lreal\lreal\l}", fillcolor="#D5E8D4"];
+}

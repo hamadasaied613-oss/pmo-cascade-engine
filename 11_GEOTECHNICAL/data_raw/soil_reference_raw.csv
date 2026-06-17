@@ -1,0 +1,5 @@
+SOIL_TYPE,BASEMENTS,SHORING_SYSTEM,SHORING_COST_AED_M2,DEWATERING_SYSTEM,DEWATERING_COST_AED_M2,NOTES
+Dense Sand,1-2,Secant Piles,580,Wellpoint,45,Common in coastal areas
+Marine Clay,>2,Diaphragm Wall,890,Deep Well,85,Requires robust solution
+Rock,Any,Rock Anchors,250,None,0,Minimal shoring if stable rock
+Sandy Silt,>=2,Contiguous Piles,450,Eductor Wells,65,Medium risk profile

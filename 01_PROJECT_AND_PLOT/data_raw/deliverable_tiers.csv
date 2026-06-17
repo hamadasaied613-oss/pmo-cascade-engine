@@ -1,0 +1,5 @@
+OBS_CODE,OUTPUT_NAME,LEVEL,DESCRIPTION,PLATFORM_ROUTE,PDF_TEMPLATE
+L1-FS,Full Feasibility Study,1,Comprehensive 10-year financial model and KPIs.,/reports/feasibility,Feasibility_A4_Landscape.tpl
+L2-PC,Project Charter,2,Single-page summary of all key project inputs.,/reports/charter,Charter_A4_Portrait.tpl
+L2-RR,Risk Register,2,Detailed log of project risks and mitigation plans.,/reports/risk,RiskRegister_A4_Landscape.tpl
+L3-DASH,Executive Dashboard,3,KPIs and charts for high-level review.,/dashboards/executive,Dashboard_16x9.tpl
