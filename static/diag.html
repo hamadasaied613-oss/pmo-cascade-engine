@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Connection Test</title></head>
+<body style="background:#0a0a0f;color:#e0e0e8;font-family:monospace;padding:30px">
+<h2>Connection Test</h2>
+<div id="result"></div>
+<script>
+const el = document.getElementById('result');
+function add(msg, ok) {
+    el.innerHTML += '<p style="color:' + (ok ? '#06D6A0' : '#EF476F') + '">' + msg + '</p>';
+}
+// Test 1: Basic JS works
+try { add('1. Basic JS: OK', true); } catch(e) { add('1. Basic JS: ' + e.message, false); }
+
+// Test 2: DOM exists
+try {
+    add('2. DOM ready: OK (' + document.title + ')', true);
+} catch(e) { add('2. DOM: ' + e.message, false); }
+
+// Test 3: Fetch status
+fetch('/n8n/webhook/status').then(r => {
+    if (r.ok) {
+        r.json().then(d => {
+            add('3. Status fetch: OK (' + d.domains + ' domains)', true);
+        });
+    } else {
+        add('3. Status fetch: HTTP ' + r.status, false);
+    }
+}).catch(e => {
+    add('3. Status fetch: ' + e.message, false);
+});
+
+// Test 4: Fetch cascade
+fetch('/api/domains').then(r => {
+    if (r.ok) return r.json();
+    throw new Error('HTTP ' + r.status);
+}).then(d => {
+    add('4. Domains API: OK (' + d.length + ' domains)', true);
+}).catch(e => {
+    add('4. Domains API: ' + e.message, false);
+});
+
+// Test 5: Fetch projects
+fetch('/api/projects/list').then(r => {
+    if (r.ok) return r.json();
+    throw new Error('HTTP ' + r.status);
+}).then(d => {
+    add('5. Projects API: OK (' + d.length + ' projects)', true);
+}).catch(e => {
+    add('5. Projects API: ' + e.message, false);
+});
+</script>
+</body></html>

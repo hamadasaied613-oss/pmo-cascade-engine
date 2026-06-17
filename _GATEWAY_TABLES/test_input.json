@@ -1,0 +1,12 @@
+{
+  "plot": "DUB-LOT-001",
+  "emirate": "Dubai",
+  "type": "MIX",
+  "style": "Modern",
+  "quality": "Premium",
+  "purpose": "investment",
+  "floors": 15,
+  "height": 55,
+  "totalArea": 12000,
+  "units": {"studio": 5, "one": 20, "two": 20, "three": 8, "pent": 2, "total": 55}
+}

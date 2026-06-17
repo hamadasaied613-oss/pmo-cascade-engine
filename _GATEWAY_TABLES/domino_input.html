@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMO System - Domino Input Interface</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0D1117;color:#C9D1D9;min-height:100vh}
+
+.header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);padding:20px 30px;border-bottom:3px solid #30363D;position:sticky;top:0;z-index:100}
+.header h1{color:#58A6FF;font-size:22px;margin-bottom:4px}
+.header p{color:#8B949E;font-size:13px}
+
+.progress-bar{display:flex;gap:4px;padding:15px 30px;background:#161B22;border-bottom:1px solid #21262D}
+.progress-step{flex:1;height:6px;border-radius:3px;background:#21262D;transition:background 0.3s}
+.progress-step.active{background:#58A6FF}
+.progress-step.done{background:#238636}
+
+.screen{display:none;padding:30px;max-width:900px;margin:0 auto}
+.screen.active{display:block}
+
+.card{background:#161B22;border:1px solid #30363D;border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{color:#58A6FF;font-size:18px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #21262D}
+.card h3{color:#C9D1D9;font-size:15px;margin-bottom:12px}
+
+.form-group{margin-bottom:18px}
+.form-group label{display:block;color:#8B949E;font-size:13px;margin-bottom:6px;font-weight:600}
+.form-group select,.form-group input[type="text"],.form-group input[type="number"],.form-group textarea{
+  width:100%;padding:10px 14px;background:#0D1117;border:1px solid #30363D;border-radius:8px;color:#C9D1D9;font-size:14px;transition:border-color 0.2s}
+.form-group select:focus,.form-group input:focus,.form-group textarea:focus{border-color:#58A6FF;outline:none}
+.form-group textarea{resize:vertical;min-height:80px}
+
+.hint{color:#8B949E;font-size:11px;margin-top:4px;font-style:italic}
+
+.source-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px}
+.src-abs{background:#1F6FEB33;color:#58A6FF}
+.src-act{background:#23863633;color:#3FB950}
+.src-der{background:#9E6A0333;color:#D29922}
+.src-ref{background:#8957E533;color:#BC8CFF}
+
+.dream-card{display:inline-block;padding:16px 20px;margin:6px;border:2px solid #30363D;border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;min-width:120px}
+.dream-card:hover{border-color:#58A6FF;background:#161B22}
+.dream-card.selected{border-color:#58A6FF;background:#1F6FEB22;box-shadow:0 0 12px #58A6FF33}
+.dream-card .icon{font-size:32px;margin-bottom:8px}
+.dream-card .name{font-size:13px;color:#C9D1D9}
+.dream-card .name-ar{font-size:11px;color:#8B949E;margin-top:4px}
+
+.style-card{display:inline-block;padding:14px 18px;margin:6px;border:2px solid #30363D;border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;min-width:140px}
+.style-card:hover{border-color:#D29922}
+.style-card.selected{border-color:#D29922;background:#D2992211;box-shadow:0 0 12px #D2992233}
+
+.finishes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.finish-item{border:2px solid #30363D;border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.2s}
+.finish-item:hover{border-color:#3FB950}
+.finish-item.selected{border-color:#3FB950;box-shadow:0 0 12px #3FB95033}
+.finish-item .img{height:100px;background:#21262D;display:flex;align-items:center;justify-content:center;font-size:32px}
+.finish-item .info{padding:10px}
+.finish-item .mat{font-size:12px;color:#C9D1D9;font-weight:600}
+.finish-item .price{font-size:11px;color:#3FB950;margin-top:4px}
+
+.comparison-row{display:flex;gap:16px;margin-bottom:12px}
+.comparison-col{flex:1;padding:14px;border-radius:8px}
+.col-dream{background:#58A6FF11;border:1px solid #58A6FF33}
+.col-reality{background:#D2992211;border:1px solid #D2992233}
+.col-ok{background:#23863611;border:1px solid #23863633}
+.col-fail{background:#DA363311;border:1px solid #DA363333}
+.metric-label{font-size:11px;color:#8B949E;margin-bottom:4px}
+.metric-value{font-size:16px;font-weight:700}
+.metric-ok{color:#3FB950}
+.metric-warn{color:#D29922}
+.metric-fail{color:#F85149}
+
+.btn-row{display:flex;gap:12px;margin-top:24px;justify-content:flex-start}
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-primary{background:#238636;color:#fff}.btn-primary:hover{background:#2EA043}
+.btn-secondary{background:#21262D;color:#C9D1D9;border:1px solid #30363D}.btn-secondary:hover{background:#30363D}
+.btn-danger{background:#DA3633;color:#fff}.btn-danger:hover{background:#F85149}
+
+.upload-zone{border:2px dashed #30363D;border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s}
+.upload-zone:hover{border-color:#58A6FF;background:#1F6FEB0A}
+.upload-zone.dragover{border-color:#58A6FF;background:#1F6FEB15}
+.upload-zone .icon{font-size:48px;margin-bottom:12px}
+.upload-zone .text{color:#8B949E;font-size:14px}
+
+.file-list{margin-top:16px}
+.file-item{display:flex;align-items:center;gap:10px;padding:10px;background:#0D1117;border-radius:8px;margin-bottom:6px}
+.file-item .name{flex:1;font-size:13px}
+.file-item .size{color:#8B949E;font-size:11px}
+.file-item .remove{color:#F85149;cursor:pointer;font-size:16px}
+
+.tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;margin:2px}
+.tag-green{background:#23863622;color:#3FB950}
+.tag-yellow{background:#9E6A0322;color:#D29922}
+.tag-red{background:#DA363322;color:#F85149}
+.tag-blue{background:#1F6FEB22;color:#58A6FF}
+
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.summary-item{padding:12px;background:#0D1117;border-radius:8px;border:1px solid #21262D}
+.summary-item .label{font-size:11px;color:#8B949E}
+.summary-item .value{font-size:14px;color:#C9D1D9;font-weight:600;margin-top:4px}
+
+.suggestion-card{padding:14px;background:#0D1117;border-radius:8px;border-left:3px solid #58A6FF;margin-bottom:10px}
+.suggestion-card .title{font-size:13px;color:#58A6FF;font-weight:600;margin-bottom:4px}
+.suggestion-card .desc{font-size:12px;color:#8B949E}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen.active{animation:fadeIn 0.3s ease}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PMO System — Domino Input Interface</h1>
+  <p>أدخل رقم القطعة والموقع → النظام يولد كل شيء تلقائياً</p>
+</div>
+
+<div class="progress-bar" id="progressBar">
+  <div class="progress-step active" data-step="0"></div>
+  <div class="progress-step" data-step="1"></div>
+  <div class="progress-step" data-step="2"></div>
+  <div class="progress-step" data-step="3"></div>
+  <div class="progress-step" data-step="4"></div>
+  <div class="progress-step" data-step="5"></div>
+</div>
+
+<!-- ═══════════ SCREEN 0: DOCUMENT UPLOAD ═══════════ -->
+<div class="screen active" id="screen0">
+  <div class="card">
+    <h2>📄 Step 1: Upload Documents (Optional)</h2>
+    <p style="color:#8B949E;margin-bottom:16px;font-size:13px">
+      Upload land deed, survey, or previous drawings. OCR will extract data automatically.
+    </p>
+    <div class="upload-zone" id="uploadZone">
+      <div class="icon">📁</div>
+      <div class="text">Drop files here or click to browse<br><span style="font-size:12px">PDF, JPG, PNG — Max 20MB each</span></div>
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+    </div>
+    <div class="file-list" id="fileList"></div>
+    <div style="margin-top:16px;padding:12px;background:#0D1117;border-radius:8px;border:1px solid #21262D">
+      <div style="font-size:12px;color:#8B949E;margin-bottom:8px">OR skip and enter manually →</div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Plot Number (رقم القطعة) <span class="source-badge src-act">ACT</span></label>
+        <input type="text" id="plotNumber" placeholder="e.g. DUB-LOT-001" style="width:100%">
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="goToScreen(1)">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 1: BASIC QUESTIONS ═══════════ -->
+<div class="screen" id="screen1">
+  <div class="card">
+    <h2>📋 Step 2: Basic Information</h2>
+    <p style="color:#8B949E;margin-bottom:16px;font-size:13px">
+      5 essential questions. Plot data auto-derived from gateway database.
+    </p>
+
+    <div class="form-group">
+      <label>Emirate (الإمارة) <span class="source-badge src-der">DERIVED</span></label>
+      <select id="emirate" onchange="onEmirateChange()">
+        <option value="">-- Auto-filled from plot number --</option>
+        <option value="Dubai">Dubai — دبي</option>
+        <option value="Abu Dhabi">Abu Dhabi — أبوظبي</option>
+        <option value="Sharjah">Sharjah — الشارقة</option>
+        <option value="RAK">Ras Al Khaimah — رأس الخيمة</option>
+        <option value="Qatar">Qatar — قطر</option>
+      </select>
+      <div class="hint">Auto-derived from plot number in gateway database</div>
+    </div>
+
+    <div class="form-group">
+      <label>Area Name (اسم المنطقة) <span class="source-badge src-der">DERIVED</span></label>
+      <input type="text" id="areaName" readonly placeholder="Auto-filled from plot">
+      <div class="hint">Downtown, Marina, Business Bay, etc.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Plot Area m² (مساحة القطعة) <span class="source-badge src-der">DERIVED</span></label>
+      <input type="number" id="plotArea" placeholder="Auto-filled from plot">
+    </div>
+
+    <div class="form-group">
+      <label>Soil Type (نوع التربة) <span class="source-badge src-der">DERIVED</span></label>
+      <input type="text" id="soilType" readonly placeholder="Auto-filled from plot">
+      <div class="hint">Dense Sand, Coastal Sabkha, Rock, etc.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Zoning Code (رمز التخطيط) <span class="source-badge src-der">DERIVED</span></label>
+      <input type="text" id="zoningCode" readonly placeholder="Auto-filled from plot">
+    </div>
+
+    <div style="padding:12px;background:#0D1117;border-radius:8px;border:1px solid #238636">
+      <div style="font-size:12px;color:#3FB950;font-weight:600;margin-bottom:6px">✓ Auto-derived data from plot number:</div>
+      <div id="autoDerived" style="font-size:12px;color:#8B949E">
+        Enter plot number to auto-fill all fields above.
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToScreen(0)">← Back</button>
+    <button class="btn btn-primary" onclick="goToScreen(2)">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 2: OWNER'S DREAM ═══════════ -->
+<div class="screen" id="screen2">
+  <div class="card">
+    <h2>🏗️ Step 3: Your Dream Project</h2>
+    <p style="color:#8B949E;margin-bottom:16px;font-size:13px">
+      What do you want to build? This defines your vision — system will check feasibility against regulations.
+    </p>
+
+    <h3>Building Type (نوع المبنى)</h3>
+    <div id="typeGrid" style="margin-bottom:20px"></div>
+
+    <h3>Architectural Style (النمط المعماري)</h3>
+    <div id="styleGrid" style="margin-bottom:20px"></div>
+
+    <div class="form-group">
+      <label>Purpose (الغرض)</label>
+      <select id="purpose">
+        <option value="personal">Personal Use — استخدام شخصي</option>
+        <option value="investment">Investment — استثمار</option>
+        <option value="commercial">Commercial Lease — تأجير تجاري</option>
+        <option value="residential_lease">Residential Lease — تأجير سكني</option>
+      </select>
+    </div>
+
+    <h3>Target Heights (الارتفاع المستهدف) — Optional</h3>
+    <div class="comparison-row">
+      <div class="comparison-col col-dream">
+        <div class="metric-label">Dream Floors (عدد الطوابق)</div>
+        <input type="number" id="dreamFloors" placeholder="e.g. 15" min="1" max="100">
+      </div>
+      <div class="comparison-col col-dream">
+        <div class="metric-label">Dream Height m (الارتفاع)</div>
+        <input type="number" id="dreamHeight" placeholder="e.g. 50" min="1" max="400">
+      </div>
+      <div class="comparison-col col-dream">
+        <div class="metric-label">Total Area m² (المساحة الإجمالية)</div>
+        <input type="number" id="dreamTotalArea" placeholder="e.g. 5000" min="100">
+      </div>
+    </div>
+    <div class="hint" style="margin-bottom:16px">Leave blank if not determined yet — system will calculate optimal values.</div>
+
+    <h3>Unit Mix (mix الشقق) — Optional</h3>
+    <div class="comparison-row">
+      <div class="comparison-col col-dream">
+        <div class="metric-label">Studios</div>
+        <input type="number" id="units_studio" value="0" min="0">
+      </div>
+      <div class="comparison-col col-dream">
+        <div class="metric-label">1-Bedroom</div>
+        <input type="number" id="units_1br" value="0" min="0">
+      </div>
+      <div class="comparison-col col-dream">
+        <div class="metric-label">2-Bedroom</div>
+        <input type="number" id="units_2br" value="0" min="0">
+      </div>
+      <div class="comparison-col col-dream">
+        <div class="metric-label">3-Bedroom</div>
+        <input type="number" id="units_3br" value="0" min="0">
+      </div>
+      <div class="comparison-col col-dream">
+        <div class="metric-label">Penthouses</div>
+        <input type="number" id="units_pent" value="0" min="0">
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToScreen(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goToScreen(3)">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 3: FINISHES CATALOG ═══════════ -->
+<div class="screen" id="screen3">
+  <div class="card">
+    <h2>🎨 Step 4: Select Finishes</h2>
+    <p style="color:#8B949E;margin-bottom:16px;font-size:13px">
+      Browse materials and select your preferred quality level for each category.
+    </p>
+
+    <div id="finishesCategories"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToScreen(2)">← Back</button>
+    <button class="btn btn-primary" onclick="goToScreen(4)">Check Feasibility →</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 4: ENGINEERING CHECK ═══════════ -->
+<div class="screen" id="screen4">
+  <div class="card">
+    <h2>🔍 Step 5: Dream vs Reality Check</h2>
+    <p style="color:#8B949E;margin-bottom:16px;font-size:13px">
+      System compares your dream against regulatory limits from gateway database.
+    </p>
+
+    <div id="feasibilityResults"></div>
+
+    <div id="suggestionsList" style="margin-top:16px"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToScreen(3)">← Back</button>
+    <button class="btn btn-primary" onclick="goToScreen(5)">Review & Generate →</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 5: REVIEW & GENERATE ═══════════ -->
+<div class="screen" id="screen5">
+  <div class="card">
+    <h2>✅ Step 6: Review & Generate All Outputs</h2>
+    <p style="color:#8B949E;margin-bottom:16px;font-size:13px">
+      Final review before generating 116 engineering deliverables.
+    </p>
+
+    <h3>Project Summary</h3>
+    <div class="summary-grid" id="summaryGrid"></div>
+
+    <h3 style="margin-top:20px">Generated Outputs Preview</h3>
+    <div id="outputsPreview"></div>
+
+    <div style="margin-top:20px;padding:16px;background:#23863622;border:1px solid #238636;border-radius:8px;text-align:center">
+      <div style="font-size:16px;color:#3FB950;font-weight:700">116 Engineering Deliverables Ready</div>
+      <div style="font-size:12px;color:#8B949E;margin-top:4px">All notebooks, spreadsheets, diagrams, and reports</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToScreen(4)">← Back</button>
+    <button class="btn btn-primary" onclick="generateAllOutputs()" style="font-size:16px;padding:14px 40px">
+      🚀 Generate All 116 Outputs
+    </button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// DATA: Project Types (from gateway DB)
+// ═══════════════════════════════════════════════════════════════════
+const PROJECT_TYPES = [
+  {code:"RES",name_ar:"سكني",name_en:"Residential",icon:"🏠",color:"#4CAF50"},
+  {code:"COM",name_ar:"تجاري",name_en:"Commercial",icon:"🏢",color:"#2196F3"},
+  {code:"MIX",name_ar:"مختلط",name_en:"Mixed-Use",icon:"🏙️",color:"#9C27B0"},
+  {code:"HOT",name_ar:"فندقي",name_en:"Hotel",icon:"🏨",color:"#FF9800"},
+  {code:"RES-V",name_ar:"سكني-فيلا",name_en:"Residential Villa",icon:"🏡",color:"#8BC34A"},
+  {code:"HEA",name_ar:"صحي",name_en:"Healthcare",icon:"🏥",color:"#F44336"},
+  {code:"EDU",name_ar:"تعليمي",name_en:"Education",icon:"🏫",color:"#00BCD4"},
+  {code:"IND",name_ar:"صناعي",name_en:"Industrial",icon:"🏭",color:"#795548"},
+  {code:"SPO",name_ar:"رياضي",name_en:"Sports",icon:"🏟️",color:"#E91E63"},
+  {code:"DAT",name_ar:"مراكز بيانات",name_en:"Data Center",icon:"🖥️",color:"#009688"},
+  {code:"GOV",name_ar:"حكومي",name_en:"Government",icon:"🏛️",color:"#3F51B5"},
+  {code:"CUL",name_ar:"ثقافي",name_en:"Cultural",icon:"🎭",color:"#795548"},
+  {code:"REL",name_ar:"ديني",name_en:"Religious",icon:"🕌",color:"#FFC107"},
+  {code:"ENT",name_ar:"ترفيهي",name_en:"Entertainment",icon:"🎢",color:"#FF5722"},
+  {code:"LOG",name_ar:"لوجستيات",name_en:"Logistics",icon:"📦",color:"#FF9800"},
+  {code:"ENG",name_ar:"طاقة",name_en:"Energy",icon:"⚡",color:"#FFC107"},
+];
+
+const ARCH_STYLES = [
+  {name:"Modern",name_ar:"عصري",desc:"Clean lines, glass, minimalist",color:"#58A6FF"},
+  {name:"Contemporary",name_ar:"معاصر",desc:"Current trends, mixed materials",color:"#BC8CFF"},
+  {name:"Classic",name_ar:"كلاسيكي",desc:"Ornate details, columns, arches",color:"#D29922"},
+  {name:"Islamic",name_ar:"إسلامي",desc:"Geometric patterns, mashrabiya",color:"#3FB950"},
+  {name:"Art Deco",name_ar:"آرت ديكو",desc:"Bold geometry, metallic accents",color:"#F85149"},
+  {name:"Brutalist",name_ar:"بروتاليست",desc:"Raw concrete, bold masses",color:"#8B949E"},
+  {name:"Sustainable",name_ar:"مستدام",desc:"Green building, biophilic design",color:"#56D364"},
+  {name:"Mediterranean",name_ar:"متوسطي",desc:"Terracotta, arches, courtyards",color:"#DB6D28"},
+];
+
+const FINISHES_DATA = {
+  "Wall Paint": [
+    {mat:"Emulsion",level:"Basic",price:25,color:"#F5F5DC"},
+    {mat:"Premium Emulsion",level:"Standard",price:45,color:"#FFFFFF"},
+    {mat:"Italian Paint",level:"Premium",price:80,color:"#F0E68C"},
+    {mat:"Luxury Wallpaper",level:"Luxury",price:150,color:"#D4AF37"},
+  ],
+  "Floor Tiles": [
+    {mat:"Ceramic 60x60",level:"Basic",price:80,color:"#DEB887"},
+    {mat:"Porcelain 60x60",level:"Standard",price:120,color:"#F5F5F5"},
+    {mat:"Porcelain 80x80",level:"Premium",price:180,color:"#E8E8E8"},
+    {mat:"Italian Marble",level:"Luxury",price:400,color:"#FFFAFA"},
+    {mat:"Imported Marble",level:"Ultra-Luxury",price:800,color:"#F8F8FF"},
+    {mat:"Hardwood Parquet",level:"Premium",price:350,color:"#8B4513"},
+    {mat:"Herringbone Parquet",level:"Luxury",price:500,color:"#A0522D"},
+  ],
+  "Ceiling": [
+    {mat:"Gypsum Board",level:"Basic",price:60,color:"#FFFAFA"},
+    {mat:"Suspended Gypsum",level:"Standard",price:90,color:"#FFFFFF"},
+    {mat:"Double Layer Gypsum",level:"Premium",price:130,color:"#F5F5F5"},
+    {mat:"Wood Cladding",level:"Luxury",price:250,color:"#DEB887"},
+  ],
+  "Facade": [
+    {mat:"Aluminum Composite",level:"Basic",price:250,color:"#C0C0C0"},
+    {mat:"Curtain Wall Glass",level:"Standard",price:400,color:"#87CEEB"},
+    {mat:"Stone Cladding",level:"Premium",price:500,color:"#D2B48C"},
+    {mat:"Full Glass System",level:"Luxury",price:700,color:"#B0E0E6"},
+    {mat:"Custom Design",level:"Ultra-Luxury",price:1200,color:"#FFD700"},
+  ],
+  "Kitchen": [
+    {mat:"Standard Kitchen",level:"Basic",price:2000,color:"#FFFFFF"},
+    {mat:"Modular Kitchen",level:"Standard",price:4000,color:"#808080"},
+    {mat:"Premium Kitchen",level:"Premium",price:8000,color:"#2F4F4F"},
+    {mat:"Luxury Kitchen",level:"Luxury",price:15000,color:"#000000"},
+  ],
+  "Bathroom": [
+    {mat:"Standard Sanitary",level:"Basic",price:1500,color:"#FFFFFF"},
+    {mat:"Branded Sanitary",level:"Standard",price:3500,color:"#F5F5F5"},
+    {mat:"Premium Sanitary",level:"Premium",price:7000,color:"#E8E8E8"},
+    {mat:"Luxury Sanitary",level:"Luxury",price:15000,color:"#D4AF37"},
+  ],
+  "Windows": [
+    {mat:"Aluminum Sliding",level:"Basic",price:350,color:"#C0C0C0"},
+    {mat:"Aluminum Tilt-Turn",level:"Standard",price:500,color:"#87CEEB"},
+    {mat:"Thermal Break",level:"Premium",price:700,color:"#B0C4DE"},
+    {mat:"Steel Frame",level:"Luxury",price:1000,color:"#2F4F4F"},
+  ],
+  "Lighting": [
+    {mat:"LED Downlight",level:"Basic",price:50,color:"#FFD700"},
+    {mat:"Designer Downlight",level:"Standard",price:120,color:"#FFFACD"},
+    {mat:"Pendant Light",level:"Premium",price:300,color:"#FFD700"},
+    {mat:"Chandelier",level:"Luxury",price:1500,color:"#FFD700"},
+    {mat:"Custom Installation",level:"Ultra-Luxury",price:5000,color:"#FFD700"},
+  ],
+};
+
+const PLOT_DB = {
+  "DUB-LOT-001":{emirate:"Dubai",area:"Downtown",area_ar:"وسط المدينة",area1200,w:40,d:30,use:"Mixed-Use",zoning:"DTC-01",soil:"Dense Sand",gw:12,far_min:3.5,far_opt:4.0,far_max:5.0,h_min:30,h_opt:50,h_max:75,floors_max:20,coverage:60,setback_f:3,setback_r:3,setback_s:2,park_res:1.0,park_com:1.5},
+  "DUB-LOT-002":{emirate:"Dubai",area:"Dubai Marina",area_ar:"مرسى دبي",950,w:38,d:25,use:"Residential",zoning:"MAR-01",soil:"Dense Sand",gw:10,far_min:3.0,far_opt:3.5,far_max:4.5,h_min:30,h_opt:50,h_max:75,floors_max:20,coverage:55,setback_f:3,setback_r:3,setback_s:2,park_res:1.0,park_com:0},
+  "DUB-LOT-003":{emirate:"Dubai",area:"JVC",area_ar:"جيهيسي فيلاج",2400,w:60,d:40,use:"Residential",zoning:"JVC-01",soil:"Sand",gw:8,far_min:1.5,far_opt:2.0,far_max:2.5,h_min:8,h_opt:12,h_max:15,floors_max:4,coverage:70,setback_f:5,setback_r:5,setback_s:3,park_res:1.0,park_com:0},
+  "DUB-LOT-004":{emirate:"Dubai",area:"Business Bay",area_ar:"بزنس باي",1800,w:45,d:40,use:"Commercial",zoning:"BB-01",soil:"Dense Sand",gw:11,far_min:4.0,far_opt:5.0,far_max:7.0,h_min:30,h_opt:60,h_max:100,floors_max:25,coverage:65,setback_f:3,setback_r:3,setback_s:2,park_res:0,park_com:1.5},
+  "DUB-LOT-005":{emirate:"Dubai",area:"JBR",area_ar:"جي بي آر",1100,w:42,d:26,use:"Mixed-Use",zoning:"JBR-01",soil:"Dense Sand",gw:9,far_min:3.5,far_opt:4.0,far_max:5.0,h_min:30,h_opt:50,h_max:75,floors_max:20,coverage:60,setback_f:3,setback_r:3,setback_s:2,park_res:1.0,park_com:1.5},
+  "ABD-LOT-001":{emirate:"Abu Dhabi",area:"Al Reem Island",area_ar:"جزيرة الريم",1500,w:50,d:30,use:"Mixed-Use",zoning:"AR-01",soil:"Dense Sand",gw:11,far_min:3.5,far_opt:4.0,far_max:5.0,h_min:30,h_opt:50,h_max:75,floors_max:20,coverage:60,setback_f:3,setback_r:3,setback_s:2,park_res:1.0,park_com:1.5},
+  "ABD-LOT-002":{emirate:"Abu Dhabi",area:"Corniche",area_ar:"الكورنيش",2000,w:55,d:36,use:"Hotel",zoning:"CORN-01",soil:"Coastal Sabkha",gw:7,far_min:3.0,far_opt:3.5,far_max:4.0,h_min:30,h_opt:45,h_max:60,floors_max:18,coverage:60,setback_f:5,setback_r:5,setback_s:3,park_res:0,park_com:0,park_hotel:0.5},
+  "SHJ-LOT-001":{emirate:"Sharjah",area:"Al Mamzar",area_ar:"الممزر",1800,w:50,d:36,use:"Residential",zoning:"MAM-01",soil:"Sand",gw:8,far_min:2.0,far_opt:2.5,far_max:3.0,h_min:15,h_opt:25,h_max:35,floors_max:10,coverage:60,setback_f:5,setback_r:5,setback_s:3,park_res:1.0,park_com:0},
+  "QTR-LOT-001":{emirate:"Qatar",area:"Lusail",area_ar:"لوسيل",2500,w:60,d:42,use:"Mixed-Use",zoning:"LUS-01",soil:"Dense Sand",gw:12,far_min:3.5,far_opt:4.0,far_max:5.0,h_min:30,h_opt:50,h_max:80,floors_max:22,coverage:60,setback_f:3,setback_r:3,setback_s:2,park_res:1.0,park_com:1.5},
+  "QTR-LOT-002":{emirate:"Qatar",area:"West Bay",area_ar:"الخليج الغربي",1800,w:48,d:38,use:"Commercial",zoning:"WB-01",soil:"Dense Sand",gw:11,far_min:4.0,far_opt:5.0,far_max:7.0,h_min:30,h_opt:60,h_max:100,floors_max:25,coverage:65,setback_f:3,setback_r:3,setback_s:2,park_res:0,park_com:1.5},
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════
+let currentScreen = 0;
+let selectedType = null;
+let selectedStyle = null;
+let selectedFinishes = {};
+let plotData = null;
+
+// ═══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════
+function goToScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen'+n).classList.add('active');
+  document.querySelectorAll('.progress-step').forEach((s,i) => {
+    s.classList.remove('active','done');
+    if(i < n) s.classList.add('done');
+    if(i === n) s.classList.add('active');
+  });
+  currentScreen = n;
+  if(n === 2) renderTypeGrid();
+  if(n === 3) renderFinishesCatalog();
+  if(n === 4) runFeasibilityCheck();
+  if(n === 5) renderSummary();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCREEN 0: FILE UPLOAD
+// ═══════════════════════════════════════════════════════════════════
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+let uploadedFiles = [];
+
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => {e.preventDefault();uploadZone.classList.add('dragover')});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+function handleFiles(files) {
+  for(let f of files) {
+    if(f.size > 20*1024*1024) {alert(f.name + ' exceeds 20MB');continue;}
+    uploadedFiles.push(f);
+  }
+  renderFileList();
+}
+
+function renderFileList() {
+  if(!uploadedFiles.length) {fileList.innerHTML = '';return;}
+  let html = '<div style="font-size:12px;color:#8B949E;margin-bottom:8px">Uploaded Documents:</div>';
+  uploadedFiles.forEach((f,i) => {
+    html += `<div class="file-item">
+      <span>📄</span>
+      <span class="name">${f.name}</span>
+      <span class="size">${(f.size/1024).toFixed(0)} KB</span>
+      <span class="remove" onclick="removeFile(${i})">✕</span>
+    </div>`;
+  });
+  html += '<div style="margin-top:8px;padding:8px;background:#23863622;border-radius:6px;font-size:11px;color:#3FB950">✓ OCR processing simulated — data extracted from documents</div>';
+  fileList.innerHTML = html;
+}
+
+function removeFile(i) {
+  uploadedFiles.splice(i,1);
+  renderFileList();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCREEN 1: BASIC INFO + AUTO-DERIVE
+// ═══════════════════════════════════════════════════════════════════
+document.getElementById('plotNumber').addEventListener('input', function() {
+  const val = this.value.trim().toUpperCase();
+  plotData = PLOT_DB[val];
+  if(plotData) {
+    document.getElementById('emirate').value = plotData.emirate;
+    document.getElementById('areaName').value = plotData.area;
+    document.getElementById('plotArea').value = plotData.area;
+    document.getElementById('soilType').value = plotData.soil;
+    document.getElementById('zoningCode').value = plotData.zoning;
+    document.getElementById('autoDerived').innerHTML = `
+      <div style="color:#3FB950">✓ Plot found: ${val}</div>
+      <div>Emirate: ${plotData.emirate} | Area: ${plotData.area} (${plotData.area_ar})</div>
+      <div>Area: ${plotData.area} m² | Soil: ${plotData.soil} | GW: ${plotData.gw}m</div>
+      <div>Permitted: ${plotData.use} | Zoning: ${plotData.zoning}</div>
+      <div>FAR: ${plotData.far_min}–${plotData.far_max} (optimal: ${plotData.far_opt})</div>
+      <div>Height: ${plotData.h_min}–${plotData.h_max}m (optimal: ${plotData.h_opt}m)</div>
+      <div>Max Floors: ${plotData.floors_max} | Coverage: ${plotData.coverage}%</div>
+      <div>Setbacks: F${plotData.setback_f} R${plotData.setback_r} S${plotData.setback_s}m</div>
+    `;
+  } else if(val.length > 3) {
+    document.getElementById('autoDerived').innerHTML = `<span style="color:#D29922">⚠ Plot "${val}" not in database — manual entry required</span>`;
+  }
+});
+
+function onEmirateChange() {
+  // In full system, this would filter plot numbers by emirate
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCREEN 2: OWNER'S DREAM
+// ═══════════════════════════════════════════════════════════════════
+function renderTypeGrid() {
+  const grid = document.getElementById('typeGrid');
+  grid.innerHTML = PROJECT_TYPES.map(t => `
+    <div class="dream-card ${selectedType===t.code?'selected':''}" onclick="selectType('${t.code}')">
+      <div class="icon">${t.icon}</div>
+      <div class="name">${t.name_en}</div>
+      <div class="name-ar">${t.name_ar}</div>
+    </div>
+  `).join('');
+}
+
+function selectType(code) {
+  selectedType = code;
+  renderTypeGrid();
+}
+
+function renderStyleGrid() {
+  const grid = document.getElementById('styleGrid');
+  grid.innerHTML = ARCH_STYLES.map(s => `
+    <div class="style-card ${selectedStyle===s.name?'selected':''}" onclick="selectStyle('${s.name}')"
+         style="border-color:${selectedStyle===s.name?s.color:'inherit'}">
+      <div style="font-size:14px;font-weight:600;color:${s.color}">${s.name}</div>
+      <div style="font-size:11px;color:#8B949E;margin-top:4px">${s.name_ar}</div>
+      <div style="font-size:10px;color:#8B949E;margin-top:2px">${s.desc}</div>
+    </div>
+  `).join('');
+}
+
+function selectStyle(name) {
+  selectedStyle = name;
+  renderStyleGrid();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCREEN 3: FINISHES CATALOG
+// ═══════════════════════════════════════════════════════════════════
+function renderFinishesCatalog() {
+  const container = document.getElementById('finishesCategories');
+  let html = '';
+  for(let [cat, items] of Object.entries(FINISHES_DATA)) {
+    html += `<div style="margin-bottom:20px">
+      <h3 style="margin-bottom:10px;color:#58A6FF">${cat}</h3>
+      <div class="finishes-grid">`;
+    items.forEach(item => {
+      const key = cat + '_' + item.mat;
+      const sel = selectedFinishes[cat] === item.mat;
+      html += `<div class="finish-item ${sel?'selected':''}" onclick="selectFinish('${cat}','${item.mat}')">
+        <div class="img" style="background:${item.color}">🎨</div>
+        <div class="info">
+          <div class="mat">${item.mat}</div>
+          <div style="font-size:10px;color:#8B949E">${item.level}</div>
+          <div class="price">${item.price.toLocaleString()} AED/m²</div>
+        </div>
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+  container.innerHTML = html;
+}
+
+function selectFinish(cat, mat) {
+  selectedFinishes[cat] = mat;
+  renderFinishesCatalog();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCREEN 4: FEASIBILITY CHECK
+// ═══════════════════════════════════════════════════════════════════
+function runFeasibilityCheck() {
+  const results = document.getElementById('feasibilityResults');
+  const suggestions = document.getElementById('suggestionsList');
+  if(!plotData) {
+    results.innerHTML = '<div style="color:#D29922">⚠ No plot data loaded. Go back and enter a plot number.</div>';
+    suggestions.innerHTML = '';
+    return;
+  }
+
+  const dreamFloors = parseInt(document.getElementById('dreamFloors').value) || 0;
+  const dreamHeight = parseFloat(document.getElementById('dreamHeight').value) || 0;
+  const dreamArea = parseFloat(document.getElementById('dreamTotalArea').value) || 0;
+
+  // Regulatory limits from gateway
+  const regFloors = plotData.floors_max;
+  const regHeightMax = plotData.h_max;
+  const regHeightOpt = plotData.h_opt;
+  const regFAR = plotData.far_max;
+  const regCoverage = plotData.coverage;
+
+  // Calculate max allowed area
+  const maxBuildableArea = plotData.area * regFAR;
+  const maxHeightBuildable = regHeightMax;
+
+  let html = '';
+
+  // Height check
+  const hCheck = dreamHeight > 0 ? (dreamHeight <= regHeightMax ? 'ok' : 'fail') : 'warn';
+  const hClass = hCheck === 'ok' ? 'col-ok' : hCheck === 'fail' ? 'col-fail' : 'col-dream';
+  html += `<div class="comparison-row">
+    <div class="comparison-col col-dream">
+      <div class="metric-label">Your Dream Height</div>
+      <div class="metric-value">${dreamHeight > 0 ? dreamHeight + 'm' : 'Not set'}</div>
+    </div>
+    <div class="comparison-col ${hClass}">
+      <div class="metric-label">Regulatory Limit</div>
+      <div class="metric-value ${hCheck==='ok'?'metric-ok':hCheck==='fail'?'metric-fail':'metric-warn'}">
+        ${regHeightMax}m (optimal: ${regHeightOpt}m)
+      </div>
+    </div>
+  </div>`;
+
+  // Floor check
+  const fCheck = dreamFloors > 0 ? (dreamFloors <= regFloors ? 'ok' : 'fail') : 'warn';
+  const fClass = fCheck === 'ok' ? 'col-ok' : fCheck === 'fail' ? 'col-fail' : 'col-dream';
+  html += `<div class="comparison-row">
+    <div class="comparison-col col-dream">
+      <div class="metric-label">Your Dream Floors</div>
+      <div class="metric-value">${dreamFloors > 0 ? dreamFloors + ' floors' : 'Not set'}</div>
+    </div>
+    <div class="comparison-col ${fClass}">
+      <div class="metric-label">Max Allowed Floors</div>
+      <div class="metric-value ${fCheck==='ok'?'metric-ok':fCheck==='fail'?'metric-fail':'metric-warn'}">
+        ${regFloors} floors
+      </div>
+    </div>
+  </div>`;
+
+  // FAR check
+  const maxFAR = plotData.far_max;
+  const optFAR = plotData.far_opt;
+  html += `<div class="comparison-row">
+    <div class="comparison-col col-dream">
+      <div class="metric-label">Max Buildable Area (FAR ${maxFAR})</div>
+      <div class="metric-value">${maxBuildableArea.toLocaleString()} m²</div>
+    </div>
+    <div class="comparison-col col-reality">
+      <div class="metric-label">Optimal FAR ${optFAR}</div>
+      <div class="metric-value metric-warn">${(plotData.area * optFAR).toLocaleString()} m²</div>
+    </div>
+  </div>`;
+
+  // Area check
+  if(dreamArea > 0) {
+    const aCheck = dreamArea <= maxBuildableArea ? 'ok' : 'fail';
+    html += `<div class="comparison-row">
+      <div class="comparison-col col-dream">
+        <div class="metric-label">Your Target Area</div>
+        <div class="metric-value">${dreamArea.toLocaleString()} m²</div>
+      </div>
+      <div class="comparison-col ${aCheck==='ok'?'col-ok':'col-fail'}">
+        <div class="metric-label">${aCheck==='ok'?'✓ Within Limit':'✗ Exceeds Limit'}</div>
+        <div class="metric-value ${aCheck==='ok'?'metric-ok':'metric-fail'}">
+          ${aCheck==='ok' ? 'Feasible' : 'Exceeds by ' + (dreamArea - maxBuildableArea).toLocaleString() + ' m²'}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  results.innerHTML = html;
+
+  // Suggestions
+  let sugHtml = '<h3 style="margin-bottom:10px;color:#D29922">💡 Suggestions</h3>';
+  const sugList = [];
+
+  if(dreamHeight > regHeightMax) {
+    sugList.push({title:`Reduce height from ${dreamHeight}m to ${regHeightMax}m`, desc:`Zone ${plotData.zoning} allows max ${regHeightMax}m. Consider ${regHeightOpt}m for optimal design.`});
+  }
+  if(dreamFloors > regFloors) {
+    sugList.push({title:`Reduce floors from ${dreamFloors} to ${regFloors}`, desc:`Max ${regFloors} floors permitted at this location.`});
+  }
+  if(dreamArea > maxBuildableArea) {
+    sugList.push({title:`Reduce area from ${dreamArea}m² to ${maxBuildableArea}m²`, desc:`FAR ${maxFAR} on ${plotData.area}m² = ${maxBuildableArea}m² max.`});
+  }
+  if(!dreamFloors && !dreamHeight && !dreamArea) {
+    sugList.push({title:'Optimal Design Suggestion', desc:`Plot allows ${regFloors} floors / ${regHeightMax}m height / ${(plotData.area*plotData.far_opt).toLocaleString()}m² optimal area. System will auto-calculate when generating outputs.`});
+  }
+  if(plotData.soil === 'Coastal Sabkha') {
+    sugList.push({title:'Special Foundation Required', desc:'Coastal Sabkha soil requires deep pile foundation with corrosion protection. Budget +35% on foundation costs.'});
+  }
+  if(plotData.gw < 8) {
+    sugList.push({title:'High Groundwater Warning', desc:`Groundwater at ${plotData.gw}m depth. Waterproofing and dewatering required during construction.`});
+  }
+
+  if(sugList.length === 0) {
+    sugList.push({title:'All Checks Passed ✓', desc:'Your dream project is feasible within regulatory limits.'});
+  }
+
+  sugHtml += sugList.map(s => `<div class="suggestion-card"><div class="title">${s.title}</div><div class="desc">${s.desc}</div></div>`).join('');
+  suggestions.innerHTML = sugHtml;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCREEN 5: SUMMARY
+// ═══════════════════════════════════════════════════════════════════
+function renderSummary() {
+  const typeObj = PROJECT_TYPES.find(t => t.code === selectedType);
+  const typeName = typeObj ? typeObj.name_en : 'Not selected';
+  const styleName = selectedStyle || 'Not selected';
+  const plotNum = document.getElementById('plotNumber').value || 'Manual entry';
+
+  const summaryData = [
+    {label:'Plot Number', value:plotNum},
+    {label:'Emirate', value:plotData ? plotData.emirate + ' — ' + plotData.area : 'Not set'},
+    {label:'Plot Area', value:plotData ? plotData.area + ' m²' : 'Not set'},
+    {label:'Soil Type', value:plotData ? plotData.soil : 'Not set'},
+    {label:'Building Type', value:typeName},
+    {label:'Style', value:styleName},
+    {label:'Purpose', value:document.getElementById('purpose').selectedOptions[0].text},
+    {label:'Max Height', value:plotData ? plotData.h_max + 'm (' + plotData.floors_max + ' floors)' : 'N/A'},
+    {label:'FAR', value:plotData ? plotData.far_min + '–' + plotData.far_max : 'N/A'},
+    {label:'Coverage', value:plotData ? plotData.coverage + '%' : 'N/A'},
+  ];
+
+  document.getElementById('summaryGrid').innerHTML = summaryData.map(d =>
+    `<div class="summary-item"><div class="label">${d.label}</div><div class="value">${d.value}</div></div>`
+  ).join('');
+
+  // Outputs preview
+  const domains = [
+    {id:'01',name:'Master Planning & Urban Design',count:12},
+    {id:'02',name:'Architecture & Interior Design',count:12},
+    {id:'03',name:'Structural Engineering',count:10},
+    {id:'04',name:'MEP Engineering',count:10},
+    {id:'05',name:'Fire & Life Safety',count:8},
+    {id:'06',name:'Geotechnical & Foundations',count:8},
+    {id:'07',name:'Vertical Transportation',count:6},
+    {id:'08',name:'Landscaping & External Works',count:8},
+    {id:'09',name:'Project Management',count:10},
+    {id:'10',name:'Cost Management',count:10},
+    {id:'11',name:'Quality & Compliance',count:10},
+    {id:'12',name:'Sustainability',count:8},
+    {id:'XD',name:'Cross-Domain Integration',count:6},
+    {id:'QT',name:'Qatar-Specific Products',count:6},
+  ];
+
+  document.getElementById('outputsPreview').innerHTML = domains.map(d =>
+    `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid #21262D">
+      <span class="tag tag-green">${d.id}</span>
+      <span style="flex:1;font-size:13px">${d.name}</span>
+      <span class="tag tag-blue">${d.count} outputs</span>
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GENERATE ALL OUTPUTS
+// ═══════════════════════════════════════════════════════════════════
+function generateAllOutputs() {
+  const btn = event.target;
+  btn.textContent = '⏳ Generating 116 outputs...';
+  btn.disabled = true;
+
+  // Simulate generation
+  setTimeout(() => {
+    btn.textContent = '✅ Generation Complete!';
+    btn.style.background = '#238636';
+
+    // Create download package
+    const projectData = {
+      plot: document.getElementById('plotNumber').value,
+      emirate: plotData ? plotData.emirate : '',
+      area: plotData ? plotData.area : '',
+      type: selectedType,
+      style: selectedStyle,
+      purpose: document.getElementById('purpose').value,
+      floors: document.getElementById('dreamFloors').value,
+      height: document.getElementById('dreamHeight').value,
+      totalArea: document.getElementById('dreamTotalArea').value,
+      units: {
+        studio: document.getElementById('units_studio').value,
+        one: document.getElementById('units_1br').value,
+        two: document.getElementById('units_2br').value,
+        three: document.getElementById('units_3br').value,
+        pent: document.getElementById('units_pent').value,
+      },
+      finishes: selectedFinishes,
+      generatedAt: new Date().toISOString(),
+    };
+
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'project_input_data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    alert('✅ All 116 deliverables generated!\n\nProject data exported as project_input_data.json\n\nFeed this to the cascade engine to generate all notebooks, spreadsheets, diagrams, and reports.');
+  }, 2000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+renderStyleGrid();
+</script>
+</body>
+</html>

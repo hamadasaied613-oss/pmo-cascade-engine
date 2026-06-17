@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMO CASCADE Sovereign Engine</title>
+<script>
+if(window.location.protocol==='file:'){
+  window.location.href='http://localhost:9000/';
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--card:#16161e;--border:#1e1e2a;
+--accent:#00B4D8;--accent2:#06D6A0;--accent3:#FFD166;--accent4:#EF476F;
+--text:#e0e0e8;--text2:#8888a0;--text3:#555568;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+.header{background:linear-gradient(135deg,#0a0a0f 0%,#0d1117 50%,#0a0a0f 100%);border-bottom:1px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.header h1{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .sub{color:var(--text2);font-size:12px;margin-top:2px}
+.header .status{display:flex;gap:12px;align-items:center}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);box-shadow:0 0 8px var(--accent2)}
+.status-dot.offline{background:var(--accent4);box-shadow:0 0 8px var(--accent4)}
+.layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 70px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 0;overflow-y:auto}
+.sidebar .section{padding:8px 20px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-top:12px}
+.sidebar .nav-item{padding:10px 20px;cursor:pointer;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:10px;transition:all .15s}
+.sidebar .nav-item:hover{background:rgba(0,180,216,.05);color:var(--text)}
+.sidebar .nav-item.active{background:rgba(0,180,216,.1);color:var(--accent);border-right:3px solid var(--accent)}
+.main{padding:30px;overflow-y:auto;max-height:calc(100vh - 70px)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card h2 .icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;transition:border .2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.form-group select{cursor:pointer}
+.btn{padding:12px 28px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0090ad);color:#fff;box-shadow:0 4px 15px rgba(0,180,216,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,180,216,.4)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-sm{padding:8px 16px;font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+.stat .val{font-size:28px;font-weight:700;line-height:1}
+.stat .lbl{font-size:11px;color:var(--text2);margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--surface);color:var(--accent);padding:10px 14px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+.tbl tr:hover td{background:rgba(0,180,216,.03)}
+.domain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.domain-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.domain-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.domain-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.domain-card h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.domain-card .ar{font-size:12px;color:var(--text2);margin-bottom:8px}
+.domain-card .info{font-size:11px;color:var(--text3)}
+.domain-card .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600}
+.tab-content{display:none}.tab-content.active{display:block}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{padding:12px 20px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.loading{display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;color:var(--text2)}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;padding:14px 24px;border-radius:10px;font-size:13px;z-index:1000;transform:translateY(100px);opacity:0;transition:all .3s ease}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#06D6A0;color:#000}.toast.error{background:#EF476F;color:#fff}.toast.info{background:var(--accent);color:#000}
+#viewer3d{width:100%;height:400px;background:#08080d;border-radius:10px;border:1px solid var(--border);position:relative;overflow:hidden}
+#viewer3d canvas{width:100%!important;height:100%!important}
+#planCanvas{width:100%;height:500px;background:#08080d;border-radius:10px;border:1px solid var(--border)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* --- CATALOG WIZARD --- */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:90vw;max-width:1100px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{font-size:18px;font-weight:600}
+.modal-header .step-indicator{display:flex;gap:6px;align-items:center}
+.modal-header .step-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .3s}
+.modal-header .step-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.modal-header .step-dot.done{background:var(--accent2)}
+.modal-body{flex:1;overflow-y:auto;padding:28px}
+.modal-footer{padding:16px 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+
+/* --- CATALOG GRID --- */
+.catalog-step{display:none}.catalog-step.active{display:block}
+.catalog-step h3{font-size:15px;margin-bottom:6px;color:var(--accent)}
+.catalog-step .desc{font-size:12px;color:var(--text2);margin-bottom:20px}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.catalog-card{background:var(--card);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}
+.catalog-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.catalog-card.selected{border-color:var(--accent2);box-shadow:0 0 20px rgba(6,214,160,.2)}
+.catalog-card.selected::after{content:'OK';position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--accent2);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.catalog-thumb{height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;overflow:hidden}
+.catalog-thumb .swatch{position:absolute;top:0;left:0;right:0;bottom:0;background-size:cover;background-position:center}
+.catalog-thumb .swatch img{width:100%;height:100%;object-fit:cover}
+.catalog-info{padding:12px}
+.catalog-info .name{font-size:13px;font-weight:600;margin-bottom:2px}
+.catalog-info .detail{font-size:11px;color:var(--text2)}
+.catalog-info .price-tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.catalog-info .price-tag.basic{background:rgba(0,180,216,.15);color:var(--accent)}
+.catalog-info .price-tag.standard{background:rgba(6,214,160,.15);color:var(--accent2)}
+.catalog-info .price-tag.premium{background:rgba(255,209,102,.15);color:var(--accent3)}
+.catalog-info .price-tag.luxury{background:rgba(239,71,111,.15);color:var(--accent4)}
+
+/* --- QUALITY METER --- */
+.quality-meter{margin-top:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.quality-meter h4{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.meter-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+.meter-fill{height:100%;border-radius:4px;transition:width .5s ease,background .5s ease}
+.meter-label{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3)}
+.quality-result{text-align:center;margin-top:12px;padding:12px;border-radius:8px;font-size:14px;font-weight:700}
+.quality-result.basic{background:rgba(0,180,216,.1);color:var(--accent);border:1px solid rgba(0,180,216,.3)}
+.quality-result.standard{background:rgba(6,214,160,.1);color:var(--accent2);border:1px solid rgba(6,214,160,.3)}
+.quality-result.premium{background:rgba(255,209,102,.1);color:var(--accent3);border:1px solid rgba(255,209,102,.3)}
+.quality-result.luxury{background:rgba(239,71,111,.1);color:var(--accent4);border:1px solid rgba(239,71,111,.3)}
+
+/* --- SELECTED SUMMARY --- */
+.selected-summary{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.selected-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11px;background:var(--card);border:1px solid var(--border)}
+.selected-chip .remove{cursor:pointer;color:var(--accent4);font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>PMO CASCADE Sovereign Engine</h1>
+    <div class="sub">Full 12-Domain Chain · Visual Catalog Selection</div>
+  </div>
+  <div class="status">
+    <span style="font-size:12px;color:var(--text2)" id="serverStatus">Connecting...</span>
+    <div class="status-dot offline" id="statusDot"></div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="section">Project</div>
+    <div class="nav-item active" onclick="showTab('input',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Project Input
+    </div>
+    <div class="nav-item" onclick="showTab('catalog',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Visual Catalogs
+    </div>
+    <div class="section">Engine</div>
+    <div class="nav-item" onclick="showTab('cascade',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Cascade Results
+    </div>
+    <div class="nav-item" onclick="showTab('domains',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      12 Domains
+    </div>
+    <div class="nav-item" onclick="showTab('plan',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 3H3v18h18V3zM9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+      2D Structural Plan
+    </div>
+    <div class="nav-item" onclick="showTab('model3d',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      3D Model
+    </div>
+    <div class="section">Output</div>
+    <div class="nav-item" onclick="showTab('boq',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      BOQ & Cost
+    </div>
+    <div class="nav-item" onclick="showTab('report',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Report
+    </div>
+    <div class="section">Automation</div>
+    <div class="nav-item" onclick="showTab('n8n',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      N8n Automation
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- INPUT TAB -->
+    <div class="tab-content active" id="tab-input">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(0,180,216,.15);color:var(--accent)">&#9670;</span> Project Identification</h2>
+        <div class="form-grid">
+          <div class="form-group"><label>Plot Number</label><input id="inp-plot" value="DUB-LOT-001"></div>
+          <div class="form-group"><label>Emirate</label>
+            <select id="inp-emirate"><option value="Dubai">Dubai</option><option value="Abu Dhabi">Abu Dhabi</option><option value="Sharjah">Sharjah</option><option value="Qatar">Qatar</option><option value="RAK">Ras Al Khaimah</option></select>
+          </div>
+          <div class="form-group"><label>Building Type</label>
+            <select id="inp-type"><option value="RES">Residential</option><option value="COM">Commercial</option><option value="MIX" selected>Mixed-Use</option><option value="HOT">Hotel</option></select>
+          </div>
+          <div class="form-group"><label>Floors</label><input id="inp-floors" type="number" value="15" min="1" max="100"></div>
+          <div class="form-group"><label>Height (m)</label><input id="inp-height" type="number" value="55" min="5" max="400"></div>
+          <div class="form-group"><label>Total Area (m²)</label><input id="inp-area" type="number" value="12000" min="100"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(131,56,236,.15);color:#8338EC">&#127912;</span> Design Selections (Visual Catalogs)</h2>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:16px">Select your preferences from visual catalogs. The system infers quality level automatically.</p>
+        <button class="btn btn-primary" onclick="openCatalog()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Open Design Catalog
+        </button>
+        <div id="selectedSummary" class="selected-summary" style="margin-top:16px"></div>
+        <div id="qualityMeter" class="quality-meter" style="display:none">
+          <h4>Inferred Quality Level</h4>
+          <div class="meter-bar"><div class="meter-fill" id="meterFill" style="width:0%;background:var(--accent)"></div></div>
+          <div class="meter-label"><span>Basic</span><span>Standard</span><span>Premium</span><span>Luxury</span></div>
+          <div class="quality-result" id="qualityResult"></div>
+        </div>
+      </div>
+
+      <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runCascade()" id="btnRun">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Run Full Cascade
+        </button>
+        <button class="btn btn-secondary" onclick="loadTestInput()">Load Test</button>
+        <button class="btn btn-secondary" onclick="saveProject()">[save] Save Project</button>
+        <button class="btn btn-secondary" onclick="showTab('report',document.querySelectorAll('.nav-item')[8])">[xls] Export</button>
+        <span id="runStatus" style="font-size:12px;color:var(--text2)"></span>
+      </div>
+
+      <!-- SAVED PROJECTS -->
+      <div class="card" id="projectsCard">
+        <h2><span class="icon" style="background:rgba(6,214,160,.15);color:var(--accent2)">&#128190;</span> Saved Projects</h2>
+        <div id="projectsList" style="font-size:13px;color:var(--text2)">Loading...</div>
+      </div>
+    </div>
+
+    <!-- CATALOG TAB -->
+    <div class="tab-content" id="tab-catalog">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(131,56,236,.15);color:#8338EC">&#127912;</span> Visual Design Catalogs</h2>
+        <p style="color:var(--text2);margin-bottom:16px">Click categories below to open selection albums.</p>
+        <div class="catalog-grid" id="catalogCategoryGrid"></div>
+      </div>
+    </div>
+
+    <!-- CASCADE TAB -->
+    <div class="tab-content" id="tab-cascade">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(6,214,160,.15);color:var(--accent2)">&#10003;</span> Cascade Engine Results</h2>
+        <div class="stats" id="cascadeStats"></div>
+        <div id="cascadeDetails"></div>
+      </div>
+    </div>
+
+    <!-- DOMAINS TAB -->
+    <div class="tab-content" id="tab-domains">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(131,56,236,.15);color:#8338EC">&#9632;</span> 12 Domain Chain</h2>
+        <div class="domain-grid" id="domainGrid"></div>
+      </div>
+      <div class="card" id="domainDetail" style="display:none">
+        <h2 id="domainDetailTitle">Domain Detail</h2>
+        <div id="domainDetailContent"></div>
+      </div>
+    </div>
+
+    <!-- 2D PLAN TAB -->
+    <div class="tab-content" id="tab-plan">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(255,209,102,.15);color:var(--accent3)">&#9641;</span> Structural Floor Plan</h2>
+        <canvas id="planCanvas" width="900" height="500"></canvas>
+        <div style="margin-top:12px;display:flex;gap:12px">
+          <button class="btn btn-secondary btn-sm" onclick="drawPlan()">Redraw</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D MODEL TAB -->
+    <div class="tab-content" id="tab-model3d">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(199,125,255,.15);color:#C77DFF">&#9650;</span> 3D Structural Model</h2>
+        <div id="viewer3d"></div>
+        <div style="margin-top:12px;display:flex;gap:12px">
+          <button class="btn btn-secondary btn-sm" onclick="build3D()">Rebuild</button>
+          <button class="btn btn-secondary btn-sm" onclick="build3D()">Reset Camera</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOQ TAB -->
+    <div class="tab-content" id="tab-boq">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(0,180,216,.15);color:var(--accent)">&#8381;</span> Bill of Quantities</h2>
+        <div class="stats" id="boqStats"></div>
+        <table class="tbl"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Rate (AED)</th><th>Cost (AED)</th></tr></thead><tbody id="boqBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- REPORT TAB -->
+    <div class="tab-content" id="tab-report">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(251,86,7,.15);color:#FB5607">&#9993;</span> Export & Reports</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+          <div class="domain-card" onclick="window.open('/api/export/excel','_blank')" style="border-top:3px solid #06D6A0;cursor:pointer">
+            <h3 style="color:#06D6A0">[xls] Excel Report</h3>
+            <div class="info">Full project data: Summary, Zoning, Cost Breakdown, Schedule — styled XLSX</div>
+          </div>
+          <div class="domain-card" onclick="window.open('/api/export/poster','_blank')" style="border-top:3px solid #FF006E;cursor:pointer">
+            <h3 style="color:#FF006E">[img] A3 Poster</h3>
+            <div class="info">Printable A3 poster with all key metrics — HTML format, ready for print</div>
+          </div>
+          <div class="domain-card" onclick="downloadReport()" style="border-top:3px solid #00B4D8;cursor:pointer">
+            <h3 style="color:#00B4D8">[html] HTML Report</h3>
+            <div class="info">Detailed engineering report with all domain parameters</div>
+          </div>
+          <div class="domain-card" onclick="saveProject()" style="border-top:3px solid #FFD166;cursor:pointer">
+            <h3 style="color:#FFD166">[save] Save Project</h3>
+            <div class="info">Save to database for later retrieval</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(131,56,236,.15);color:#8338EC">&#128190;</span> Saved Projects</h2>
+        <div id="reportProjectsList">Loading...</div>
+      </div>
+    </div>
+
+    <!-- N8N TAB -->
+    <div class="tab-content" id="tab-n8n">
+      <div class="card">
+        <h2><span class="icon" style="background:rgba(239,71,111,.15);color:var(--accent4)">&#9881;</span> N8n Webhooks</h2>
+        <table class="tbl"><thead><tr><th>Endpoint</th><th>Method</th><th>Purpose</th></tr></thead><tbody>
+          <tr><td><code>/n8n/webhook/cascade</code></td><td>POST</td><td>Run cascade</td></tr>
+          <tr><td><code>/n8n/webhook/chain</code></td><td>POST</td><td>Full chain</td></tr>
+          <tr><td><code>/n8n/webhook/domain/{id}</code></td><td>POST</td><td>Query domain</td></tr>
+          <tr><td><code>/api/cascade</code></td><td>POST</td><td>REST cascade</td></tr>
+          <tr><td><code>/api/domain/{id}</code></td><td>GET</td><td>Domain data</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CATALOG WIZARD MODAL -->
+<div class="modal-overlay" id="catalogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Design Catalog</h2>
+      <div class="step-indicator" id="stepIndicator"></div>
+      <button class="btn btn-secondary btn-sm" onclick="closeCatalog()" style="padding:6px 12px">X Close</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btnPrev" onclick="catalogPrev()">← Previous</button>
+      <span id="stepLabel" style="font-size:12px;color:var(--text2)"></span>
+      <button class="btn btn-primary" id="btnNext" onclick="catalogNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/static/three.min.js"></script>
+
+<script>
+// ===============================================
+// CATALOG DATA — All selections with quality scores
+// ===============================================
+const CATALOG = {
+  style: {
+    title: 'Architectural Style',
+    titleAr: 'الطراز المعماري',
+    desc: 'Choose the overall architectural character of the building',
+    items: [
+      { id:'modern', name:'Modern', nameAr:'عصري', desc:'Clean lines, glass & steel, flat roofs', color:'#00B4D8', gradient:'linear-gradient(135deg,#0a1628,#0d2847,#0a1628)', img:'/static/images/bg-blueprint-dark.jpg', score:0.7, costFactor:1.0 },
+      { id:'contemporary', name:'Contemporary', nameAr:'معاصر', desc:'Bold forms, mixed materials, dynamic facade', color:'#06D6A0', gradient:'linear-gradient(135deg,#0a1f1a,#0d3d2f,#0a1f1a)', img:'/static/images/bg-engineering.jpg', score:0.75, costFactor:1.05 },
+      { id:'minimalist', name:'Minimalist', nameAr:'بسيط', desc:'Essential forms, monochrome, maximum space', color:'#FFD166', gradient:'linear-gradient(135deg,#1a1a10,#2d2d1a,#1a1a10)', img:'/static/images/bg-gear-light.jpg', score:0.6, costFactor:0.9 },
+      { id:'classic', name:'Classic European', nameAr:'كلاسيكي أوروبي', desc:'Arches, columns, ornamental details', color:'#EF476F', gradient:'linear-gradient(135deg,#1a0a10,#2d1018,#1a0a10)', img:'/static/images/Photo 1.jpg', score:0.9, costFactor:1.2 },
+      { id:'islamic', name:'Islamic', nameAr:'إسلامي', desc:'Geometric patterns, mashrabiya, calligraphy', color:'#8338EC', gradient:'linear-gradient(135deg,#100a1a,#1a102d,#100a1a)', img:'/static/images/Photo 2.jpg', score:0.95, costFactor:1.3 },
+      { id:'art-deco', name:'Art Deco', nameAr:'آرت ديكو', desc:'Stepped forms, rich materials, geometric ornament', color:'#C77DFF', gradient:'linear-gradient(135deg,#1a0a1f,#2d1035,#1a0a1f)', img:'/static/images/20210929_113508.jpg', score:0.85, costFactor:1.15 },
+    ]
+  },
+  exterior: {
+    title: 'Exterior Finishes',
+    titleAr: 'التشطيبات الخارجية',
+    desc: 'Select facade materials, paint systems, and external elements',
+    items: [
+      { id:'paint_basic', name:'Weather Proof Paint', nameAr:'دهان عادي مقاوم للعوامل', desc:'2 coats acrylic emulsion, standard durability', color:'#555', gradient:'linear-gradient(135deg,#3a3a3a,#555,#3a3a3a)', score:0.4, costFactor:0.8, category:'paint' },
+      { id:'paint_premium', name:'Premium Elastomeric', nameAr:'دهان مرن فاخر', desc:'3 coats elastomeric, crack-bridging, 10yr warranty', color:'#00B4D8', gradient:'linear-gradient(135deg,#003344,#005577,#003344)', score:0.7, costFactor:1.0, category:'paint' },
+      { id:'paint_luxury', name:'Nano-Ceramic Coating', nameAr:'طلاء سيراميك نانوي', desc:'Self-cleaning, UV resistant, 15yr warranty', color:'#FFD166', gradient:'linear-gradient(135deg,#3d2f10,#5a4520,#3d2f10)', score:0.95, costFactor:1.4, category:'paint' },
+
+      { id:'alu_standard', name:'Standard Aluminum', nameAr:'ألمنيوم عادي', desc:'Powder coated aluminum frames, single glazed', color:'#777', gradient:'linear-gradient(135deg,#2a2a2a,#444,#2a2a2a)', score:0.5, costFactor:0.9, category:'aluminum' },
+      { id:'alu_therm', name:'Thermal Break System', nameAr:'نظام كسر حراري', desc:'6063-T5 thermal break, double glazed, AC efficient', color:'#06D6A0', gradient:'linear-gradient(135deg,#0a1f1a,#153d2f,#0a1f1a)', score:0.75, costFactor:1.1, category:'aluminum' },
+      { id:'alu_luxury', name:'Unitized Curtain Wall', nameAr:'ستارة زجاجية موحدة', desc:'Pre-fabricated units, triple glazed, smart glass option', color:'#EF476F', gradient:'linear-gradient(135deg,#1a0a10,#2d1518,#1a0a10)', score:0.95, costFactor:1.5, category:'aluminum' },
+
+      { id:'glass_standard', name:'Tinted Reflective Glass', nameAr:'زجاج ملون عاكس', desc:'6mm tinted, solar control, standard reflection', color:'#336', gradient:'linear-gradient(135deg,#111122,#222244,#111122)', score:0.5, costFactor:0.9, category:'glass' },
+      { id:'glass_low_e', name:'Low-E Double Glazed', nameAr:'زجاج منخفض الانبعاث', desc:'6+12A+6mm Low-E, U-value 1.4', color:'#00B4D8', gradient:'linear-gradient(135deg,#001a22,#003344,#001a22)', score:0.8, costFactor:1.2, category:'glass' },
+      { id:'glass_smart', name:'Electrochromic Smart Glass', nameAr:'زجاج ذكي كهروكيميائي', desc:'Variable tint, automated solar control, premium', color:'#8338EC', gradient:'linear-gradient(135deg,#100a1a,#1a1530,#100a1a)', score:1.0, costFactor:2.0, category:'glass' },
+
+      { id:'clad_hpl', name:'HPL Panels', nameAr:'ألواح HPL', desc:'High pressure laminate, standard colors', color:'#886', gradient:'linear-gradient(135deg,#332211,#554433,#332111)', score:0.5, costFactor:0.9, category:'cladding' },
+      { id:'clad_alucobond', name:'Alucobond Composite', nameAr:'ألوكوبوند مركب', desc:'4mm ACM panels, wide color range, 15yr finish', color:'#00B4D8', gradient:'linear-gradient(135deg,#002233,#004455,#002233)', score:0.75, costFactor:1.1, category:'cladding' },
+      { id:'clad_natural', name:'Natural Stone / Terracotta', nameAr:'حجر طبيعي / تيرا كوتا', desc:'Cut stone or extruded terracotta, lifetime finish', color:'#EF476F', gradient:'linear-gradient(135deg,#1a0f0a,#2d1a12,#1a0f0a)', score:0.95, costFactor:1.6, category:'cladding' },
+
+      { id:'ent_basic', name:'Standard Entrance', nameAr:'مدخل عادي', desc:'Aluminum glass doors, basic canopy', color:'#555', gradient:'linear-gradient(135deg,#2a2a2a,#3a3a3a,#2a2a2a)', score:0.5, costFactor:0.9, category:'entrance' },
+      { id:'ent_premium', name:'Grand Lobby Entrance', nameAr:'مدخل بهو فاخر', desc:'Auto sliders, stone cladding, feature lighting', color:'#FFD166', gradient:'linear-gradient(135deg,#2d2a10,#4a4520,#2d2a10)', score:0.8, costFactor:1.2, category:'entrance' },
+      { id:'ent_luxury', name:'Signature Portal', nameAr:'بوابة مميزة', desc:'Double-height, bespoke metalwork, water feature', color:'#EF476F', gradient:'linear-gradient(135deg,#1a0a10,#3d1520,#1a0a10)', score:1.0, costFactor:1.8, category:'entrance' },
+    ]
+  },
+  interior: {
+    title: 'Interior Finishes',
+    titleAr: 'التشطيبات الداخلية',
+    desc: 'Select paint, flooring, doors, kitchen, bathroom fixtures',
+    items: [
+      { id:'ipaint_basic', name:'Standard Emulsion', nameAr:'دهان إمولشن عادي', desc:'2 coats washable emulsion, white', color:'#ddd', gradient:'linear-gradient(135deg,#ccc,#eee,#ccc)', score:0.4, costFactor:0.8, category:'paint' },
+      { id:'ipaint_premium', name:'Premium Matt Emulsion', nameAr:'دهان مات فاخر', desc:'3 coats anti-bacterial, stain-resistant, designer colors', color:'#00B4D8', gradient:'linear-gradient(135deg,#003344,#006688,#003344)', score:0.75, costFactor:1.1, category:'paint' },
+      { id:'ipaint_luxury', name:'Venetian Plaster / Wallpaper', nameAr:'بلاستيك فينيسيان / ورق جدران', desc:'Hand-applied Venetian or Italian silk wallpaper', color:'#FFD166', gradient:'linear-gradient(135deg,#3d2f10,#5a4520,#3d2f10)', score:1.0, costFactor:1.8, category:'paint' },
+
+      { id:'floor_ceramic', name:'Ceramic Tiles 60x60', nameAr:'بلاط سيراميك 60×60', desc:'Standard ceramic, 600x600mm, basic patterns', color:'#886', gradient:'linear-gradient(135deg,#3a3530,#5a5550,#3a3530)', score:0.4, costFactor:0.8, category:'floor' },
+      { id:'floor_porcelain', name:'Porcelain 80x80', nameAr:'بورسلين 80×80', desc:'Full-body porcelain, 800x800mm, marble look', color:'#00B4D8', gradient:'linear-gradient(135deg,#002233,#004455,#002233)', score:0.7, costFactor:1.0, category:'floor' },
+      { id:'floor_marble', name:'Italian Marble', nameAr:'رخام إيطالي', desc:'Calacatta/Statuario marble slabs, book-matched', color:'#FFD166', gradient:'linear-gradient(135deg,#3d3520,#5a5040,#3d3520)', score:0.95, costFactor:2.0, category:'floor' },
+      { id:'floor_wood', name:'Engineered Hardwood', nameAr:'خشب هندسي', desc:'European oak engineered planks, herringbone', color:'#EF476F', gradient:'linear-gradient(135deg,#2d1a10,#4a3020,#2d1a10)', score:0.85, costFactor:1.5, category:'floor' },
+
+      { id:'door_hollow', name:'Hollow Core Flush', nameAr:'باب فاضي', desc:'Standard hollow core, laminate finish', color:'#777', gradient:'linear-gradient(135deg,#333,#555,#333)', score:0.3, costFactor:0.7, category:'door' },
+      { id:'door_semi', name:'Semi-Solid Core', nameAr:'باب نصف متين', desc:'Engineered wood core, veneer finish, acoustic seal', color:'#06D6A0', gradient:'linear-gradient(135deg,#0a1f1a,#153d2f,#0a1f1a)', score:0.65, costFactor:1.0, category:'door' },
+      { id:'door_solid', name:'Solid Hardwood', nameAr:'باب خشب صلب', desc:'Solid oak/walnut, custom millwork, soft-close', color:'#EF476F', gradient:'linear-gradient(135deg,#1a0a10,#2d1518,#1a0a10)', score:0.95, costFactor:2.0, category:'door' },
+
+      { id:'kitchen_std', name:'Standard Laminate', nameAr:'مطبخ لامينيت عادي', desc:'MDF cabinets, laminate countertop, basic hardware', color:'#555', gradient:'linear-gradient(135deg,#2a2a2a,#3a3a3a,#2a2a2a)', score:0.4, costFactor:0.8, category:'kitchen' },
+      { id:'kitchen_premium', name:'Acrylic / Membrane', nameAr:'أكريليك / ممبران', desc:'High-gloss acrylic or thermofoil, soft-close, granite top', color:'#00B4D8', gradient:'linear-gradient(135deg,#002233,#004466,#002233)', score:0.75, costFactor:1.2, category:'kitchen' },
+      { id:'kitchen_luxury', name:'Italian imported', nameAr:'مطبخ إيطالي مستورد', desc:'定制 Italian cabinetry, quartz/porcelain countertop, integrated appliances', color:'#FFD166', gradient:'linear-gradient(135deg,#3d2f10,#5a4520,#3d2f10)', score:1.0, costFactor:2.0, category:'kitchen' },
+
+      { id:'bath_std', name:'Standard Ceramic Suite', nameAr:'حمام سيراميك عادي', desc:'Basic WC, basin, shower mixer, ceramic tiles', color:'#555', gradient:'linear-gradient(135deg,#2a2a2a,#3a3a3a,#2a2a2a)', score:0.4, costFactor:0.8, category:'bathroom' },
+      { id:'bath_premium', name:'Premium Sanitary Ware', nameAr:'أرضيات فاخرة', desc:'Grohe/Hansgrohe fittings, designer basin, rain shower', color:'#06D6A0', gradient:'linear-gradient(135deg,#0a1f1a,#153d2f,#0a1f1a)', score:0.75, costFactor:1.3, category:'bathroom' },
+      { id:'bath_luxury', name:'Luxury Spa Bathroom', nameAr:'حمام سبا فاخر', desc:'Duravit/Villeroy & Boch, freestanding tub, smart mirror, underfloor heating', color:'#EF476F', gradient:'linear-gradient(135deg,#1a0a10,#2d1518,#1a0a10)', score:1.0, costFactor:2.5, category:'bathroom' },
+    ]
+  },
+  landscape: {
+    title: 'Landscape Package',
+    titleAr: 'باقة لاندسكيب',
+    desc: 'Select outdoor landscaping and amenity package',
+    items: [
+      { id:'ls_basic', name:'Basic Landscaping', nameAr:'لاندسكيب أساسي', desc:'Native plants, basic irrigation, boundary walls, pedestrian paths', color:'#555', gradient:'linear-gradient(135deg,#0a1a0a,#152d15,#0a1a0a)', score:0.4, costFactor:0.8, items:['Native planting','Basic irrigation','Boundary walls','Paths'] },
+      { id:'ls_standard', name:'Standard Gardens', nameAr:'حدائق عادية', desc:'Manicured lawns, palm trees, outdoor lighting, BBQ area, children play', color:'#06D6A0', gradient:'linear-gradient(135deg,#0a1f1a,#153d2f,#0a1f1a)', score:0.65, costFactor:1.0, items:['Manicured lawns','Palm trees','Outdoor lighting','BBQ area','Children play','Jogging path'] },
+      { id:'ls_premium', name:'Premium Resort', nameAr:'منتجع فاخر', desc:'Infinity pool, cabanas, water features, zen garden, yoga deck, outdoor cinema', color:'#00B4D8', gradient:'linear-gradient(135deg,#001a22,#003d55,#001a22)', score:0.85, costFactor:1.5, items:['Infinity pool','Cabanas','Water features','Zen garden','Yoga deck','Outdoor cinema','Fire pit'] },
+      { id:'ls_luxury', name:'Luxury Oasis', nameAr:'واحة فاخرة', desc:'Private pools, golf putting, sky garden, Michelin-grade outdoor dining, helipad', color:'#FFD166', gradient:'linear-gradient(135deg,#1a1a0a,#2d2d15,#1a1a0a)', score:1.0, costFactor:2.5, items:['Private pools','Golf putting','Sky garden','Outdoor dining','Helipad','Private cinema','Spa garden'] },
+    ]
+  },
+  facilities: {
+    title: 'Service Facilities',
+    titleAr: 'المنشآت الخدمية',
+    desc: 'Select attached facilities based on building type',
+    items: [
+      { id:'fc_parking', name:'Multi-Story Parking', nameAr:' موقف سيارات متعدد', desc:'Automated or manual parking levels', color:'#555', score:0.5, costFactor:1.0, forTypes:['RES','MIX','COM','HOT'] },
+      { id:'fc_security', name:'24/7 Security & CCTV', nameAr:'أمن ومراقبة 24/7', desc:'Guard booths, CCTV, access control', color:'#EF476F', score:0.6, costFactor:1.0, forTypes:['RES','MIX','COM','HOT'] },
+      { id:'fc_gym', name:'Gymnasium & Fitness', nameAr:'صالة رياضية', desc:'Fully equipped gym, changing rooms', color:'#06D6A0', score:0.7, costFactor:1.1, forTypes:['RES','MIX','HOT'] },
+      { id:'fc_pool', name:'Swimming Pool', nameAr:'حمام سباحة', desc:'Temperature controlled pool, deck area', color:'#00B4D8', score:0.75, costFactor:1.15, forTypes:['RES','MIX','HOT'] },
+      { id:'fc_retail', name:'Ground Floor Retail', nameAr:'تجاري الطابق الأرضي', desc:'Shops, F&B, service outlets', color:'#FFD166', score:0.65, costFactor:1.0, forTypes:['MIX','COM'] },
+      { id:'fc_concierge', name:'Concierge & Valet', nameAr:'خدمة كونسيرج و valet', desc:'Lobby concierge, valet parking, bell boy', color:'#8338EC', score:0.85, costFactor:1.2, forTypes:['RES','HOT'] },
+      { id:'fc_spa', name:'Spa & Wellness Center', nameAr:'سبا ومركز صحة', desc:'Sauna, steam, treatment rooms, jacuzzi', color:'#C77DFF', score:0.9, costFactor:1.3, forTypes:['HOT','MIX'] },
+      { id:'fc_conference', name:'Conference & Meeting Rooms', nameAr:'قاعات مؤتمرات', desc:'AV equipped meeting rooms, ballroom', color:'#FB5607', score:0.7, costFactor:1.1, forTypes:['COM','HOT','MIX'] },
+      { id:'fc_play', name:'Children Play Area', nameAr:'منطقة ألعاب أطفال', desc:'Indoor/outdoor play zones, nursery', color:'#06D6A0', score:0.55, costFactor:1.0, forTypes:['RES','MIX'] },
+      { id:'fc_rooftop', name:'Rooftop Lounge & Garden', nameAr:'حديقة سطح وصالة', desc:'Sky lounge, BBQ, landscaped roof', color:'#FFD166', score:0.8, costFactor:1.15, forTypes:['RES','MIX','HOT'] },
+      { id:'fc_mosque', name:'Prayer Room / Mosque', nameAr:'مصلى / مسجد', desc:'Dedicated prayer space with ablution area', color:'#06D6A0', score:0.6, costFactor:1.0, forTypes:['RES','MIX','COM','HOT'] },
+      { id:'fc_smart', name:'Smart Building System', nameAr:'نظام مبنى ذكي', desc:'IoT controls, app-based management, energy monitoring', color:'#00B4D8', score:0.9, costFactor:1.25, forTypes:['RES','MIX','COM','HOT'] },
+    ]
+  }
+};
+
+// ===============================================
+// STATE
+// ===============================================
+let cascadeData = null;
+let catalogSelections = { style:null, exterior:[], interior:[], landscape:null, facilities:[] };
+let currentCatalogStep = 0;
+const catalogSteps = ['style','exterior','interior','landscape','facilities'];
+
+// ===============================================
+// NAVIGATION
+// ===============================================
+function showTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='plan') setTimeout(drawPlan,100);
+  if(name==='model3d') setTimeout(build3D,100);
+}
+
+function toast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),3000)}
+
+async function checkServer(){try{const r=await fetch('/n8n/webhook/status');const d=await r.json();document.getElementById('serverStatus').textContent=`Online · ${d.domains} domains`;document.getElementById('statusDot').classList.remove('offline')}catch{document.getElementById('serverStatus').textContent='Offline';document.getElementById('statusDot').classList.add('offline')}}
+
+// ===============================================
+// CATALOG WIZARD
+// ===============================================
+function openCatalog(){
+  document.getElementById('catalogModal').classList.add('open');
+  currentCatalogStep = 0;
+  renderCatalogStep();
+}
+
+function closeCatalog(){document.getElementById('catalogModal').classList.remove('open')}
+
+function renderCatalogStep(){
+  const stepKey = catalogSteps[currentCatalogStep];
+  const cat = CATALOG[stepKey];
+  document.getElementById('modalTitle').textContent = cat.title + ' — ' + cat.titleAr;
+
+  // Step indicator
+  const indicator = document.getElementById('stepIndicator');
+  indicator.innerHTML = catalogSteps.map((s,i) =>
+    `<div class="step-dot ${i<currentCatalogStep?'done':''} ${i===currentCatalogStep?'active':''}"></div>`
+  ).join('');
+
+  // Filter facilities by building type
+  const bt = document.getElementById('inp-type').value;
+  let items = cat.items;
+  if(stepKey==='facilities') items = items.filter(it=>it.forTypes.includes(bt));
+
+  // Body
+  const body = document.getElementById('modalBody');
+  const isMulti = stepKey==='exterior' || stepKey==='interior' || stepKey==='facilities';
+  const currentSelection = isMulti ? (catalogSelections[stepKey]||[]) : catalogSelections[stepKey];
+
+  body.innerHTML = `
+    <div class="catalog-step active">
+      <h3>${cat.title}</h3>
+      <div class="desc">${cat.desc}</div>
+      <div class="catalog-grid">
+        ${items.map(it => {
+          const sel = isMulti ? currentSelection.includes(it.id) : currentSelection===it.id;
+          return `<div class="catalog-card ${sel?'selected':''}" onclick="toggleCatalogItem('${stepKey}','${it.id}',${isMulti})" data-id="${it.id}">
+            <div class="catalog-thumb"><div class="swatch" style="background:${it.img?'url('+it.img+')':'none'};${it.img?'':'background:'+it.gradient||it.color}"></div>${!it.img?'<span style="position:relative;z-index:1;font-size:32px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))">'+getIcon(stepKey,it)+'</span>':''}</div>
+            <div class="catalog-info">
+              <div class="name">${it.name}</div>
+              <div class="detail">${it.nameAr}</div>
+              <div class="detail" style="margin-top:4px">${it.desc}</div>
+              <span class="price-tag ${getTier(it.score)}">${getTierLabel(it.score)}</span>
+              ${it.items ? `<div style="margin-top:8px;font-size:10px;color:var(--text3)">${it.items.slice(0,4).join(' · ')}${it.items.length>4?' +'+(it.items.length-4)+' more':''}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  // Buttons
+  document.getElementById('btnPrev').style.visibility = currentCatalogStep===0?'hidden':'visible';
+  document.getElementById('btnNext').textContent = currentCatalogStep===catalogSteps.length-1?'OK Finish':'Next →';
+  document.getElementById('stepLabel').textContent = `Step ${currentCatalogStep+1} of ${catalogSteps.length}`;
+}
+
+function toggleCatalogItem(step, id, isMulti){
+  if(isMulti){
+    if(!catalogSelections[step]) catalogSelections[step]=[];
+    const idx = catalogSelections[step].indexOf(id);
+    if(idx>=0) catalogSelections[step].splice(idx,1); else catalogSelections[step].push(id);
+  } else {
+    catalogSelections[step] = catalogSelections[step]===id ? null : id;
+  }
+  renderCatalogStep();
+  updateQuality();
+  updateSelectedSummary();
+}
+
+function catalogNext(){
+  if(currentCatalogStep < catalogSteps.length-1){ currentCatalogStep++; renderCatalogStep(); }
+  else { closeCatalog(); toast('Design selections complete!','success'); }
+}
+
+function catalogPrev(){if(currentCatalogStep>0){currentCatalogStep--;renderCatalogStep()}}
+
+function getIcon(step, it){
+  const icons = {
+    style:{modern:'🏙️',contemporary:'🔷',minimalist:'⬜',classic:'🏛️',islamic:'🕌','art-deco':'💎'},
+    exterior:{_:'[ext]'},interior:{_:'[int]'},landscape:{_:'[ls]'},facilities:{_:'!'}
+  };
+  if(step==='style') return icons.style[it.id]||'[ext]';
+  if(it.id.includes('paint')) return '🎨';
+  if(it.id.includes('alu')||it.id.includes('glass')||it.id.includes('clad')) return '🏢';
+  if(it.id.includes('ent')) return '🚪';
+  if(it.id.includes('floor')) return '🔲';
+  if(it.id.includes('door')) return '🚪';
+  if(it.id.includes('kitchen')) return '🍳';
+  if(it.id.includes('bath')) return '🚿';
+  if(it.id.includes('ls_')) return '🌿';
+  if(it.id.includes('fc_')) return '!';
+  return '📋';
+}
+
+function getTier(score){return score>=0.9?'luxury':score>=0.75?'premium':score>=0.55?'standard':'basic'}
+function getTierLabel(score){return score>=0.9?'Luxury':score>=0.75?'Premium':score>=0.55?'Standard':'Basic'}
+
+// ===============================================
+// QUALITY INFERENCE ENGINE
+// ===============================================
+function inferQuality(){
+  let totalScore=0, count=0, totalCostFactor=1;
+  const allItems = [];
+
+  // Style
+  if(catalogSelections.style){
+    const it = CATALOG.style.items.find(i=>i.id===catalogSelections.style);
+    if(it){ totalScore+=it.score; count++; totalCostFactor*=it.costFactor; allItems.push(it); }
+  }
+  // Exterior (multiple)
+  (catalogSelections.exterior||[]).forEach(id=>{
+    const it = CATALOG.exterior.items.find(i=>i.id===id);
+    if(it){ totalScore+=it.score; count++; totalCostFactor*=it.costFactor; allItems.push(it); }
+  });
+  // Interior (multiple)
+  (catalogSelections.interior||[]).forEach(id=>{
+    const it = CATALOG.interior.items.find(i=>i.id===id);
+    if(it){ totalScore+=it.score; count++; totalCostFactor*=it.costFactor; allItems.push(it); }
+  });
+  // Landscape
+  if(catalogSelections.landscape){
+    const it = CATALOG.landscape.items.find(i=>i.id===catalogSelections.landscape);
+    if(it){ totalScore+=it.score; count++; totalCostFactor*=it.costFactor; allItems.push(it); }
+  }
+  // Facilities (multiple)
+  (catalogSelections.facilities||[]).forEach(id=>{
+    const it = CATALOG.facilities.items.find(i=>i.id===id);
+    if(it){ totalScore+=it.score; count++; totalCostFactor*=it.costFactor; allItems.push(it); }
+  });
+
+  if(count===0) return { level:'Standard', score:0.5, costFactor:1.0, items:[] };
+  const avg = totalScore / count;
+  // Geometric mean for cost factor
+  const avgCostFactor = Math.pow(totalCostFactor, 1/count);
+  const level = avg>=0.9?'Luxury':avg>=0.75?'Premium':avg>=0.55?'Standard':'Basic';
+  return { level, score:avg, costFactor:avgCostFactor, items:allItems };
+}
+
+function updateQuality(){
+  const q = inferQuality();
+  const meter = document.getElementById('qualityMeter');
+  const fill = document.getElementById('meterFill');
+  const result = document.getElementById('qualityResult');
+  if(q.score===0){ meter.style.display='none'; return; }
+  meter.style.display='block';
+  const pct = Math.min(q.score*100,100);
+  fill.style.width = pct+'%';
+  fill.style.background = q.level==='Luxury'?'var(--accent4)':q.level==='Premium'?'var(--accent3)':q.level==='Standard'?'var(--accent2)':'var(--accent)';
+  result.className = 'quality-result '+q.level.toLowerCase();
+  result.textContent = `${q.level} Quality — Score: ${(q.score*100).toFixed(0)}% — Cost Factor: ×${q.costFactor.toFixed(2)}`;
+}
+
+function updateSelectedSummary(){
+  const el = document.getElementById('selectedSummary');
+  const chips = [];
+  if(catalogSelections.style){
+    const it=CATALOG.style.items.find(i=>i.id===catalogSelections.style);
+    if(it) chips.push(`<span class="selected-chip" style="border-color:${it.color}">[style] ${it.name}</span>`);
+  }
+  (catalogSelections.exterior||[]).forEach(id=>{const it=CATALOG.exterior.items.find(i=>i.id===id);if(it)chips.push(`<span class="selected-chip">[ext] ${it.name}</span>`)});
+  (catalogSelections.interior||[]).forEach(id=>{const it=CATALOG.interior.items.find(i=>i.id===id);if(it)chips.push(`<span class="selected-chip">[int] ${it.name}</span>`)});
+  if(catalogSelections.landscape){const it=CATALOG.landscape.items.find(i=>i.id===catalogSelections.landscape);if(it)chips.push(`<span class="selected-chip">[ls] ${it.name}</span>`)}
+  (catalogSelections.facilities||[]).forEach(id=>{const it=CATALOG.facilities.items.find(i=>i.id===id);if(it)chips.push(`<span class="selected-chip">! ${it.name}</span>`)});
+  el.innerHTML = chips.join('');
+}
+
+// ===============================================
+// BUILD INPUT FROM CATALOG
+// ===============================================
+function buildInputFromCatalog(){
+  const q = inferQuality();
+  return {
+    plot: document.getElementById('inp-plot').value,
+    emirate: document.getElementById('inp-emirate').value,
+    type: document.getElementById('inp-type').value,
+    style: catalogSelections.style || 'modern',
+    quality: q.level,
+    qualityScore: q.score,
+    costFactor: q.costFactor,
+    purpose: 'investment',
+    floors: parseInt(document.getElementById('inp-floors').value)||15,
+    height: parseFloat(document.getElementById('inp-height').value)||55,
+    totalArea: parseFloat(document.getElementById('inp-area').value)||12000,
+    units: {studio:5,one:20,two:20,three:8,pent:2,total:55},
+    catalogSelections: {...catalogSelections},
+    exteriorItems: (catalogSelections.exterior||[]).map(id=>CATALOG.exterior.items.find(i=>i.id===id)).filter(Boolean),
+    interiorItems: (catalogSelections.interior||[]).map(id=>CATALOG.interior.items.find(i=>i.id===id)).filter(Boolean),
+    landscapeItem: catalogSelections.landscape ? CATALOG.landscape.items.find(i=>i.id===catalogSelections.landscape) : null,
+    facilityItems: (catalogSelections.facilities||[]).map(id=>CATALOG.facilities.items.find(i=>i.id===id)).filter(Boolean),
+  };
+}
+
+// ===============================================
+// CATALOG CATEGORY GRID (for tab-catalog)
+// ===============================================
+function renderCatalogCategories(){
+  const grid = document.getElementById('catalogCategoryGrid');
+  const cats = [
+    {key:'style',icon:'[style]',color:'#8338EC'},
+    {key:'exterior',icon:'[ext]',color:'#00B4D8'},
+    {key:'interior',icon:'[int]',color:'#06D6A0'},
+    {key:'landscape',icon:'[ls]',color:'#FFD166'},
+    {key:'facilities',icon:'!',color:'#EF476F'},
+  ];
+  grid.innerHTML = cats.map(c=>{
+    const cat=CATALOG[c.key];
+    const sel = catalogSelections[c.key];
+    const selCount = Array.isArray(sel) ? sel.length : (sel ? 1 : 0);
+    return `<div class="domain-card" onclick="openCatalogAt('${c.key}')" style="border-top:3px solid ${c.color}">
+      <h3 style="color:${c.color}">${c.icon} ${cat.title}</h3>
+      <div class="ar">${cat.titleAr}</div>
+      <div class="info">${cat.desc}</div>
+      ${selCount?`<span class="badge" style="background:${c.color}22;color:${c.color};margin-top:8px">${selCount} selected</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openCatalogAt(key){
+  currentCatalogStep = catalogSteps.indexOf(key);
+  openCatalog();
+}
+
+// ===============================================
+// RUN CASCADE
+// ===============================================
+async function runCascade(){
+  const btn=document.getElementById('btnRun'), status=document.getElementById('runStatus');
+  btn.disabled=true; status.textContent='Running...'; status.style.color='var(--accent)';
+  try{
+    const inp = buildInputFromCatalog();
+    const r=await fetch('/api/cascade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(inp)});
+    if(!r.ok) throw new Error(await r.text());
+    cascadeData=await r.json();
+    // Inject catalog data into cascade result
+    cascadeData.catalogSelections = catalogSelections;
+    cascadeData.inferredQuality = inferQuality();
+    status.textContent='Complete!'; status.style.color='var(--accent2)';
+    toast('Cascade completed — '+cascadeData.derived.total_project_cost?.toLocaleString()+' AED','success');
+    renderCascadeResults(); renderBOQ(); renderDomains(); showQuickStats();
+  }catch(e){status.textContent='Error: '+e.message;status.style.color='var(--accent4)';toast('Failed: '+e.message,'error')}
+  btn.disabled=false;
+}
+
+function showQuickStats(){
+  if(!cascadeData)return;const d=cascadeData.derived;
+  document.getElementById('quickStatsGrid')&&(document.getElementById('quickStatsGrid').parentElement.style.display='none');
+  // No quick stats section in new layout, skip
+}
+
+// ===============================================
+// CASCADE RESULTS
+// ===============================================
+function renderCascadeResults(){
+  if(!cascadeData)return;const d=cascadeData.derived,inp=cascadeData.input;
+  const q = cascadeData.inferredQuality || {};
+  document.getElementById('cascadeStats').innerHTML=[
+    {val:inp.emirate,lbl:'Emirate',c:'var(--accent)'},
+    {val:inp.type,lbl:'Type',c:'var(--accent2)'},
+    {val:q.level||inp.quality,lbl:'Inferred Quality',c:'var(--accent3)'},
+    {val:(inp.floors||10)+' fl',lbl:'Floors',c:'#8338EC'},
+    {val:fmt(d.total_project_cost),lbl:'Total (AED)',c:'var(--accent4)'},
+    {val:d.efficiency+'%',lbl:'Efficiency',c:'#06D6A0'},
+  ].map(i=>`<div class="stat" style="border-left:3px solid ${i.c}"><div class="val" style="color:${i.c}">${i.val}</div><div class="lbl">${i.lbl}</div></div>`).join('');
+
+  let h='<h3 style="margin:16px 0 8px">Zoning</h3><table class="tbl"><thead><tr><th>Param</th><th>Min</th><th>Opt</th><th>Max</th></tr></thead><tbody>';
+  h+=`<tr><td>FAR</td><td>${d.far_min||'-'}</td><td>${d.far_opt||'-'}</td><td>${d.far_max||'-'}</td></tr>`;
+  h+=`<tr><td>Height (m)</td><td>${d.h_min||'-'}</td><td>${d.h_opt||'-'}</td><td>${d.h_max||'-'}</td></tr>`;
+  h+=`<tr><td>Coverage</td><td colspan="3">${d.coverage_max||'-'}</td></tr>`;
+  h+=`<tr><td>Setbacks F/R/S</td><td colspan="3">${d.setback_f||'-'}/${d.setback_r||'-'}/${d.setback_s||'-'}</td></tr></tbody></table>`;
+
+  h+='<h3 style="margin:16px 0 8px">Structural</h3><table class="tbl"><thead><tr><th>Param</th><th>Value</th></tr></thead><tbody>';
+  h+=`<tr><td>System</td><td>${d.structural_system||'-'}</td></tr>`;
+  h+=`<tr><td>Concrete</td><td>${d.concrete_grade||'-'}</td></tr>`;
+  h+=`<tr><td>Foundation</td><td>${d.foundation_type||'-'}</td></tr></tbody></table>`;
+
+  h+='<h3 style="margin:16px 0 8px">Fire Safety</h3><table class="tbl"><thead><tr><th>Item</th><th>Status</th></tr></thead><tbody>';
+  h+=`<tr><td>Sprinkler</td><td>${d.sprinkler?'OK':'—'}</td></tr>`;
+  h+=`<tr><td>Fire Alarm</td><td>${d.fire_alarm?'OK':'—'}</td></tr>`;
+  h+=`<tr><td>Refuge Floor</td><td>${d.refuge_floor?'OK':'—'}</td></tr></tbody></table>`;
+
+  h+='<h3 style="margin:16px 0 8px">Areas</h3><table class="tbl"><thead><tr><th>Param</th><th>Value</th></tr></thead><tbody>';
+  h+=`<tr><td>Footprint</td><td>${fmt(d.footprint)} m²</td></tr>`;
+  h+=`<tr><td>GFA</td><td>${fmt(d.total_gfa)} m²</td></tr>`;
+  h+=`<tr><td>Efficiency</td><td>${d.efficiency}%</td></tr></tbody></table>`;
+
+  document.getElementById('cascadeDetails').innerHTML=h;
+}
+
+// ===============================================
+// BOQ
+// ===============================================
+function renderBOQ(){
+  if(!cascadeData)return;const d=cascadeData.derived;const gfa=d.total_gfa||1000;
+  const q = cascadeData.inferredQuality||{};
+  const cf = q.costFactor||1;
+  const items=[
+    ['Substructure',gfa*.15,'m²',d.cost_structure*.2*cf],
+    ['Superstructure (RC)',gfa,'m²',d.cost_structure*cf],
+    ['Concrete',gfa*.5,'m³',d.cost_structure*.6*cf],
+    ['Reinforcement',gfa*80,'kg',4.5*cf],
+    ['Facade / Cladding',gfa*.8,'m²',d.cost_facade*cf],
+    ['HVAC',gfa,'m²',d.cost_mep*.4*cf],
+    ['Electrical',gfa,'m²',d.cost_mep*.35*cf],
+    ['Plumbing',gfa,'m²',d.cost_mep*.25*cf],
+    ['Interior Fit-Out',gfa*.7,'m²',d.cost_finishes*cf],
+    ['Fire Protection',gfa,'m²',120*cf],
+    ['Elevators',d.unit_mix?.total>20?3:2,'units',180000*cf],
+    ['External Works',gfa*.1,'m²',350*cf],
+    ['Landscaping',(d.footprint||500)*.3,'m²',200*cf],
+  ];
+  const body=document.getElementById('boqBody');let total=0;
+  body.innerHTML=items.map(([n,q,u,r])=>{const c=q*r;total+=c;return`<tr><td>${n}</td><td>${fmt(q)}</td><td>${u}</td><td>${fmt(r)}</td><td>${fmt(c)}</td></tr>`}).join('')
+  +`<tr style="font-weight:700;background:var(--surface)"><td>Subtotal</td><td></td><td></td><td></td><td>${fmt(total)}</td></tr>`;
+
+  document.getElementById('boqStats').innerHTML=[
+    {val:fmt(d.construction_cost*cf),lbl:'Construction',c:'var(--accent)'},
+    {val:fmt(d.land_cost),lbl:'Land',c:'var(--accent2)'},
+    {val:fmt(d.soft_cost*cf),lbl:'Soft Costs',c:'var(--accent3)'},
+    {val:fmt(d.contingency_cost*cf),lbl:'Contingency',c:'#FB5607'},
+    {val:fmt(d.total_project_cost*cf),lbl:'Grand Total',c:'var(--accent4)'},
+  ].map(i=>`<div class="stat" style="border-left:3px solid ${i.c}"><div class="val" style="color:${i.c}">${i.val}</div><div class="lbl">${i.lbl}</div></div>`).join('');
+}
+
+// ===============================================
+// DOMAINS
+// ===============================================
+function renderDomains(){
+  const domains=[
+    {id:'01',name:'Project & Plot',ar:'المشروع والأرض',color:'#00B4D8'},
+    {id:'02',name:'Location & GIS',ar:'الموقع والخرائط',color:'#06D6A0'},
+    {id:'03',name:'Stakeholders',ar:'أصحاب المصلحة',color:'#FFD166'},
+    {id:'04',name:'Zoning & Regulatory',ar:'التخطيط والتنظيم',color:'#EF476F'},
+    {id:'05',name:'Validation',ar:'التحقق والامتثال',color:'#118AB2'},
+    {id:'06',name:'Design Parameters',ar:'معايير التصميم',color:'#073B4C'},
+    {id:'07',name:'Unit Mix',ar:'خطة الوحدات',color:'#8338EC'},
+    {id:'08',name:'Cost & Economics',ar:'التكلفة والاقتصاديات',color:'#FF006E'},
+    {id:'09',name:'Schedule',ar:'الجدول الزمني',color:'#FB5607'},
+    {id:'10',name:'Approvals',ar:'الموافقات والجهات',color:'#3A86FF'},
+    {id:'11',name:'Geotechnical',ar:'الجيوتقنية',color:'#80ED99'},
+    {id:'12',name:'Sustainability & BIM',ar:'الاستدامة والنمذجة',color:'#C77DFF'},
+  ];
+  document.getElementById('domainGrid').innerHTML=domains.map(dm=>`
+    <div class="domain-card" onclick="loadDomain('${dm.id}')" style="border-top:3px solid ${dm.color}">
+      <h3 style="color:${dm.color}">${dm.id} — ${dm.name}</h3>
+      <div class="ar">${dm.ar}</div>
+    </div>`).join('');
+}
+
+async function loadDomain(id){
+  const el=document.getElementById('domainDetail');el.style.display='block';
+  document.getElementById('domainDetailTitle').textContent=`Loading ${id}...`;
+  document.getElementById('domainDetailContent').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  try{
+    const r=await fetch('/api/domain/'+id);const data=await r.json();
+    document.getElementById('domainDetailTitle').textContent=`${id} — ${data.domain.name}`;
+    let h='';
+    for(const[tbl,rows]of Object.entries(data.data)){
+      if(!rows.length)continue;
+      h+=`<h3 style="margin:12px 0 8px">${tbl} (${rows.length})</h3>`;
+      const cols=Object.keys(rows[0]);
+      h+='<table class="tbl"><thead><tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+      h+=rows.slice(0,30).map(r=>'<tr>'+cols.map(c=>`<td>${r[c]??''}</td>`).join('')+'</tr>').join('');
+      if(rows.length>30)h+=`<tr><td colspan="${cols.length}" style="color:var(--text3)">...${rows.length-30} more</td></tr>`;
+      h+='</tbody></table>';
+    }
+    document.getElementById('domainDetailContent').innerHTML=h||'<p style="color:var(--text2)">No data yet.</p>';
+  }catch(e){document.getElementById('domainDetailContent').innerHTML=`<p style="color:var(--accent4)">${e.message}</p>`}
+}
+
+// ===============================================
+// 2D PLAN
+// ===============================================
+function drawPlan(){
+  const canvas=document.getElementById('planCanvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  ctx.fillStyle='#08080d';ctx.fillRect(0,0,W,H);
+  const d=cascadeData?.derived||{};const floors=cascadeData?.input?.floors||15;
+  const footprint=d.footprint||1375;const bw=Math.min(300,Math.sqrt(footprint)*4);const bh=bw*.8;
+  const ox=(W-bw)/2,oy=(H-bh)/2;
+  ctx.strokeStyle='#2a2a3a';ctx.lineWidth=1;
+  const cols=6,rows=5;
+  for(let i=0;i<=cols;i++){const x=ox+(bw/cols)*i;ctx.beginPath();ctx.moveTo(x,oy-30);ctx.lineTo(x,oy+bh+30);ctx.stroke();ctx.fillStyle='#555';ctx.font='10px monospace';ctx.fillText(String.fromCharCode(65+i),x-3,oy-35)}
+  for(let j=0;j<=rows;j++){const y=oy+(bh/rows)*j;ctx.beginPath();ctx.moveTo(ox-30,y);ctx.lineTo(ox+bw+30,y);ctx.stroke();ctx.fillText((j+1).toString(),ox-40,y+4)}
+  ctx.fillStyle='#00B4D8';
+  for(let i=1;i<cols;i++)for(let j=1;j<rows;j++){const x=ox+(bw/cols)*i,y=oy+(bh/rows)*j;const sz=floors>10?8:6;ctx.fillRect(x-sz/2,y-sz/2,sz,sz)}
+  const cw=bw*.25,ch=bh*.3,cx=ox+bw*.375,cy=oy+bh*.35;
+  ctx.fillStyle='rgba(239,71,111,0.2)';ctx.fillRect(cx,cy,cw,ch);ctx.strokeStyle='#EF476F';ctx.lineWidth=2;ctx.strokeRect(cx,cy,cw,ch);
+  ctx.strokeStyle='rgba(239,71,111,0.3)';ctx.lineWidth=.5;for(let i=0;i<cw+ch;i+=6){ctx.beginPath();ctx.moveTo(cx+i,cy);ctx.lineTo(cx,cy+i);ctx.stroke()}
+  ctx.fillStyle='#EF476F';ctx.font='11px monospace';ctx.fillText('CORE',cx+cw/2-15,cy+ch/2+4);
+  ctx.strokeStyle='#FFD166';ctx.lineWidth=3;ctx.strokeRect(ox+2,oy+2,bw-4,bh-4);
+  ctx.strokeStyle='#06D6A0';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(ox,oy+bh+40);ctx.lineTo(ox+bw,oy+bh+40);ctx.stroke();
+  ctx.fillStyle='#06D6A0';ctx.font='11px monospace';ctx.fillText(`${Math.round(Math.sqrt(footprint))}m`,ox+bw/2-15,oy+bh+55);
+  ctx.beginPath();ctx.moveTo(ox-40,oy);ctx.lineTo(ox-40,oy+bh);ctx.stroke();ctx.fillText(`${Math.round(footprint/Math.sqrt(footprint))}m`,ox-65,oy+bh/2);
+  ctx.setLineDash([]);
+  ctx.fillStyle='#1a1a2e';ctx.fillRect(10,H-50,W-20,40);ctx.strokeStyle='#333';ctx.strokeRect(10,H-50,W-20,40);
+  ctx.fillStyle='#e0e0e8';ctx.font='12px monospace';
+  ctx.fillText(`STRUCTURAL PLAN — ${d.structural_system||'RC Frame'} — ${floors} FL — GFA: ${fmt(d.total_gfa)} m² — ${d.concrete_grade||'C35'}`,20,H-25);
+}
+
+// ===============================================
+// 3D MODEL
+// ===============================================
+function build3D(){
+  const container=document.getElementById('viewer3d');if(!container||typeof THREE==='undefined')return;
+  container.innerHTML='';const W=container.clientWidth,H=container.clientHeight;
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x08080d);
+  camera=new THREE.PerspectiveCamera(45,W/H,.1,1000);
+  renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(W,H);renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0x404060,.6));
+  const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(50,80,50);scene.add(dl);
+  scene.add(new THREE.GridHelper(100,20,0x1a1a2a,0x111118));
+  const d=cascadeData?.derived||{};const inp=cascadeData?.input||{};
+  const floors=inp.floors||15;const bw=20,bd=16,fh=3.5,totalH=floors*fh;
+  building3D=new THREE.Group();
+  const fm=new THREE.MeshLambertMaterial({color:0x555555});
+  const f=new THREE.Mesh(new THREE.BoxGeometry(bw+2,1,bd+2),fm);f.position.y=-.5;building3D.add(f);
+  const sm=new THREE.MeshLambertMaterial({color:0x2a2a4a,transparent:true,opacity:.6});const sg=new THREE.BoxGeometry(bw,.3,bd);
+  for(let i=0;i<=floors;i++){const s=new THREE.Mesh(sg,sm);s.position.y=i*fh;building3D.add(s)}
+  const cm=new THREE.MeshLambertMaterial({color:0x00B4D8});const cg=new THREE.CylinderGeometry(.3,.3,totalH,8);
+  for(let c=0;c<=5;c++)for(let r=0;r<=4;r++){const col=new THREE.Mesh(cg,cm);col.position.set(-bw/2+(bw/5)*c,totalH/2,-bd/2+(bd/4)*r);building3D.add(col)}
+  const coreM=new THREE.MeshLambertMaterial({color:0xEF476F});const coreG=new THREE.BoxGeometry(4,totalH,4);
+  const core=new THREE.Mesh(coreG,coreM);core.position.set(bw*.15,totalH/2,0);building3D.add(core);
+  const wm=new THREE.MeshLambertMaterial({color:0xFFD166,transparent:true,opacity:.3});
+  const w1=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,.2),wm);w1.position.set(0,totalH/2,-bd/2);building3D.add(w1);
+  const w2=w1.clone();w2.position.z=bd/2;building3D.add(w2);
+  const facM=new THREE.MeshLambertMaterial({color:0x00B4D8,transparent:true,opacity:.15});
+  const fac=new THREE.Mesh(new THREE.BoxGeometry(bw+.5,totalH+.5,bd+.5),facM);fac.position.y=totalH/2;building3D.add(fac);
+  scene.add(building3D);
+  camera.position.set(35,totalH*.6,35);camera.lookAt(0,totalH/2,0);
+  let drag=false,px,py,ry=.5,rx=.3;
+  container.onmousedown=e=>{drag=true;px=e.clientX;py=e.clientY};
+  container.onmousemove=e=>{if(!drag)return;ry+=(e.clientX-px)*.005;rx+=(e.clientY-py)*.005;rx=Math.max(-1.2,Math.min(1.2,rx));px=e.clientX;py=e.clientY;upd()};
+  container.onmouseup=container.onmouseleave=()=>drag=false;
+  container.onwheel=e=>{camera.position.multiplyScalar(e.deltaY>0?1.1:.9);camera.lookAt(0,totalH/2,0)};
+  function upd(){const dist=camera.position.length();camera.position.set(dist*Math.sin(ry)*Math.cos(rx),dist*Math.sin(rx)+totalH/2,dist*Math.cos(ry)*Math.cos(rx));camera.lookAt(0,totalH/2,0)}
+  function animate(){requestAnimationFrame(animate);ry+=.002;upd();renderer.render(scene,camera)}animate();
+}
+
+// ===============================================
+// UTILS
+// ===============================================
+function fmt(n){if(n==null||isNaN(n))return'-';return Number(n).toLocaleString('en-US')}
+function loadTestInput(){
+  document.getElementById('inp-plot').value='DUB-LOT-001';
+  document.getElementById('inp-emirate').value='Dubai';
+  document.getElementById('inp-type').value='MIX';
+  document.getElementById('inp-floors').value='15';
+  document.getElementById('inp-height').value='55';
+  document.getElementById('inp-area').value='12000';
+  catalogSelections={style:'modern',exterior:['alu_therm','paint_premium','glass_low_e','clad_alucobond','ent_premium'],interior:['ipaint_premium','floor_porcelain','door_semi','kitchen_premium','bath_premium'],landscape:'ls_standard',facilities:['fc_parking','fc_security','fc_gym','fc_pool','fc_retail']};
+  updateQuality();updateSelectedSummary();toast('Test input loaded','info');
+}
+function downloadReport(){window.open('/api/report/html','_blank')}
+
+// ===============================================
+// PROJECT SAVE/LOAD
+// ===============================================
+async function saveProject(){
+  const name = prompt('Project name:', cascadeData?.input?.plot || 'Untitled');
+  if(!name) return;
+  try{
+    const r = await fetch('/api/projects/save',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        name, plot:cascadeData?.input?.plot, emirate:cascadeData?.input?.emirate,
+        type:cascadeData?.input?.type, quality:cascadeData?.inferredQuality?.level||'',
+        input:cascadeData?.input||{}, output:cascadeData?.derived||{}, catalog:cascadeData?.catalogSelections||{}
+      })
+    });
+    const d = await r.json();
+    if(d.status==='success'){ toast('Project saved! ID: '+d.project_id,'success'); loadProjects(); }
+  }catch(e){ toast('Save failed: '+e.message,'error'); }
+}
+
+async function loadProjects(){
+  try{
+    const r = await fetch('/api/projects/list'); const d = await r.json();
+    const el = document.getElementById('projectsList');
+    const el2 = document.getElementById('reportProjectsList');
+    const html = d.projects.length ? '<table class="tbl"><thead><tr><th>Name</th><th>Plot</th><th>Emirate</th><th>Type</th><th>Date</th><th></th></tr></thead><tbody>'
+      + d.projects.map(p=>`<tr><td>${p.name}</td><td>${p.plot}</td><td>${p.emirate}</td><td>${p.type}</td><td>${p.created_at?.split('T')[0]||''}</td><td><button class="btn btn-secondary btn-sm" onclick="loadProject(${p.id})">Load</button></td></tr>`).join('')
+      + '</tbody></table>'
+      : '<p style="color:var(--text3)">No saved projects yet.</p>';
+    if(el) el.innerHTML = html;
+    if(el2) el2.innerHTML = html;
+  }catch{}
+}
+
+async function loadProject(id){
+  try{
+    const r = await fetch('/api/projects/'+id); const p = await r.json();
+    if(p.input_json){
+      const inp = p.input_json;
+      document.getElementById('inp-plot').value = inp.plot||'';
+      document.getElementById('inp-emirate').value = inp.emirate||'Dubai';
+      document.getElementById('inp-type').value = inp.type||'MIX';
+      document.getElementById('inp-floors').value = inp.floors||15;
+      document.getElementById('inp-height').value = inp.height||55;
+      document.getElementById('inp-area').value = inp.totalArea||12000;
+    }
+    if(p.catalog_json){ catalogSelections = p.catalog_json; updateQuality(); updateSelectedSummary(); }
+    if(p.output_json){
+      cascadeData = {input:p.input_json||{}, derived:p.output_json, catalogSelections:p.catalog_json||{}, inferredQuality:{level:p.quality||'Standard',score:0.7,costFactor:1}};
+      renderCascadeResults(); renderBOQ(); renderDomains();
+    }
+    toast('Project loaded: '+p.name,'success');
+    showTab('input',document.querySelector('.nav-item'));
+  }catch(e){ toast('Load failed: '+e.message,'error'); }
+}
+
+// ===============================================
+// INIT
+// ===============================================
+(function(){
+  console.log('INIT: Starting...');
+  try{checkServer();console.log('INIT: checkServer done');}catch(e){console.error('INIT: checkServer error:',e);}
+  try{renderDomains();console.log('INIT: renderDomains done');}catch(e){console.error('INIT: renderDomains error:',e);}
+  try{renderCatalogCategories();console.log('INIT: renderCatalogCategories done');}catch(e){console.error('INIT: renderCatalogCategories error:',e);}
+  try{loadProjects();console.log('INIT: loadProjects done');}catch(e){console.error('INIT: loadProjects error:',e);}
+  console.log('INIT: All complete');
+})();
+</script>
+</body>
+</html>

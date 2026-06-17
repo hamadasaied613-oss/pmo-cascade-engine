@@ -1,0 +1,9 @@
+dist/
+_PMO_OUTPUTS/
+_PMO_DELIVERABLES/
+projects.db
+DOMAINS.db
+*.pyc
+__pycache__/
+.env
+*.spec
