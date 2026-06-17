@@ -7,3 +7,9 @@ DOMAINS.db
 __pycache__/
 .env
 *.spec
+*.zip
+*.7z
+*.rar
+*.ipynb
+*.ps1
+*.bat
