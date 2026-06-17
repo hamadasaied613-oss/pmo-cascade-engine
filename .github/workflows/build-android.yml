@@ -1,0 +1,386 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_url:
+        description: 'App URL for WebView'
+        required: false
+        default: 'https://web-production-c8682.up.railway.app'
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        shell: bash
+        run: |
+          APP_URL="${{ github.event.inputs.app_url || 'https://web-production-c8682.up.railway.app' }}"
+          APP_NAME="PMO_Cascade"
+          PACKAGE="com.pmo.cascade.sovereign"
+          OUTPUT_DIR="${{ github.workspace }}/build_output"
+
+          mkdir -p "$OUTPUT_DIR"
+          PROJECT=$(mktemp -d)
+
+          # Create project structure
+          mkdir -p "$PROJECT/app/src/main/java/com/pmo/cascade"
+          mkdir -p "$PROJECT/app/src/main/res/values"
+          mkdir -p "$PROJECT/app/src/main/res/drawable"
+          mkdir -p "$PROJECT/gradle/wrapper"
+
+          # AndroidManifest.xml
+          cat > "$PROJECT/app/src/main/AndroidManifest.xml" << 'MANIFEST'
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pmo.cascade.sovereign">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application
+        android:allowBackup="true"
+        android:label="PMO Cascade"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+        </activity>
+    </application>
+</manifest>
+MANIFEST
+
+          # SplashActivity.java
+          cat > "$PROJECT/app/src/main/java/com/pmo/cascade/SplashActivity.java" << 'SPLASH'
+package com.pmo.cascade;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.graphics.Color;
+import android.view.Gravity;
+
+public class SplashActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+        LinearLayout layout = new LinearLayout(this);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
+        ));
+        layout.setBackgroundColor(Color.parseColor("#0a0a0f"));
+        layout.setGravity(Gravity.CENTER);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        TextView title = new TextView(this);
+        title.setText("PMO CASCADE");
+        title.setTextSize(28);
+        title.setTextColor(Color.parseColor("#00B4D8"));
+        title.setGravity(Gravity.CENTER);
+        layout.addView(title);
+        TextView subtitle = new TextView(this);
+        subtitle.setText("Sovereign Engine v2.0");
+        subtitle.setTextSize(14);
+        subtitle.setTextColor(Color.parseColor("#8899AA"));
+        subtitle.setGravity(Gravity.CENTER);
+        layout.addView(subtitle);
+        setContentView(layout);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }, 2000);
+    }
+}
+SPLASH
+
+          # MainActivity.java
+          cat > "$PROJECT/app/src/main/java/com/pmo/cascade/MainActivity.java" << 'MAIN'
+package com.pmo.cascade;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
+import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.graphics.Color;
+
+public class MainActivity extends Activity {
+    private WebView webView;
+    private ProgressBar progressBar;
+    private TextView statusText;
+    private static final String SERVER_URL = "APP_URL_PLACEHOLDER";
+    private boolean loaded = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+        RelativeLayout root = new RelativeLayout(this);
+        root.setLayoutParams(new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.MATCH_PARENT
+        ));
+        root.setBackgroundColor(Color.parseColor("#0a0a0f"));
+        progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+        progressBar.setId(View.generateViewId());
+        RelativeLayout.LayoutParams pbParams = new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT, 3
+        );
+        pbParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        progressBar.setLayoutParams(pbParams);
+        progressBar.setVisibility(View.GONE);
+        progressBar.setMax(100);
+        root.addView(progressBar);
+        statusText = new TextView(this);
+        statusText.setText("Connecting to PMO CASCADE cloud...");
+        statusText.setTextColor(Color.parseColor("#8899AA"));
+        statusText.setTextSize(16);
+        statusText.setGravity(android.view.Gravity.CENTER);
+        RelativeLayout.LayoutParams stParams = new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        stParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        statusText.setLayoutParams(stParams);
+        root.addView(statusText);
+        webView = new WebView(this);
+        webView.setId(View.generateViewId());
+        RelativeLayout.LayoutParams wvParams = new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.MATCH_PARENT
+        );
+        wvParams.addRule(RelativeLayout.BELOW, progressBar.getId());
+        webView.setLayoutParams(wvParams);
+        webView.setVisibility(View.GONE);
+        root.addView(webView);
+        setContentView(root);
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(0);
+            }
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.GONE);
+                if (!loaded) {
+                    loaded = true;
+                    statusText.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, android.net.http.SslError error) {
+                handler.proceed();
+            }
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                if (!loaded) {
+                    statusText.setText("Cannot connect.\nCheck internet and retry...");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() { webView.loadUrl(SERVER_URL); }
+                    }, 3000);
+                }
+            }
+        });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                progressBar.setProgress(newProgress);
+            }
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage msg) { return true; }
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                new AlertDialog.Builder(MainActivity.this)
+                    .setMessage(message)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) { result.confirm(); }
+                    }).show();
+                return true;
+            }
+        });
+        if (isNetworkAvailable()) {
+            webView.loadUrl(SERVER_URL);
+        } else {
+            statusText.setText("No internet connection.\nPlease connect and restart.");
+        }
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnected();
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+            webView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+}
+MAIN
+
+          # Replace placeholder
+          sed -i "s|APP_URL_PLACEHOLDER|$APP_URL|g" "$PROJECT/app/src/main/java/com/pmo/cascade/MainActivity.java"
+
+          # Resources
+          cat > "$PROJECT/app/src/main/res/values/styles.xml" << 'STYLES'
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:colorPrimary">#00B4D8</item>
+        <item name="android:colorPrimaryDark">#0a0a0f</item>
+        <item name="android:colorAccent">#00B4D8</item>
+        <item name="android:windowBackground">#0a0a0f</item>
+    </style>
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash_bg</item>
+    </style>
+</resources>
+STYLES
+
+          cat > "$PROJECT/app/src/main/res/values/strings.xml" << 'STRINGS'
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PMO Cascade</string>
+</resources>
+STRINGS
+
+          cat > "$PROJECT/app/src/main/res/drawable/splash_bg.xml" << 'SPLASH_BG'
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/black" />
+</layer-list>
+SPLASH_BG
+
+          # Gradle configs
+          cat > "$PROJECT/build.gradle" << 'GRADLE_ROOT'
+buildscript {
+    repositories { google(); mavenCentral() }
+    dependencies { classpath 'com.android.tools.build:gradle:8.1.0' }
+}
+allprojects { repositories { google(); mavenCentral() } }
+GRADLE_ROOT
+
+          cat > "$PROJECT/app/build.gradle" << 'GRADLE_APP'
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.pmo.cascade.sovereign'
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.pmo.cascade.sovereign"
+        minSdk 24
+        targetSdk 34
+        versionCode 2
+        versionName "2.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
+}
+dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' }
+GRADLE_APP
+
+          cat > "$PROJECT/settings.gradle" << 'SETTINGS'
+rootProject.name = "PMO_Cascade"
+include ':app'
+SETTINGS
+
+          cat > "$PROJECT/gradle/wrapper/gradle-wrapper.properties" << 'WRAPPER'
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+WRAPPER
+
+          # Generate Gradle wrapper
+          cd "$PROJECT"
+          gradle wrapper --gradle-version 8.2 2>/dev/null || true
+
+          # Build
+          cd "$PROJECT"
+          chmod +x gradlew 2>/dev/null || true
+          ./gradlew assembleDebug --no-daemon 2>&1
+
+          # Copy APK
+          find "$PROJECT" -name "*.apk" -exec cp {} "$OUTPUT_DIR/${APP_NAME}_v2.0.apk" \;
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PMO_Cascade_APK
+          path: build_output/*.apk
